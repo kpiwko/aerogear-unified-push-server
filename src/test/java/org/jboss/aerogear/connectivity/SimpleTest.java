@@ -27,11 +27,11 @@ import javax.persistence.PersistenceContextType;
 
 import junit.framework.Assert;
 
-import org.aerogear.connectivity.api.MobileVariant;
-import org.aerogear.connectivity.jpa.PersistentObject;
-import org.aerogear.connectivity.jpa.dao.PushApplicationDao;
-import org.aerogear.connectivity.jpa.dao.impl.PushApplicationDaoImpl;
-import org.aerogear.connectivity.model.PushApplication;
+import org.jboss.aerogear.connectivity.api.MobileVariant;
+import org.jboss.aerogear.connectivity.jpa.PersistentObject;
+import org.jboss.aerogear.connectivity.jpa.dao.PushApplicationDao;
+import org.jboss.aerogear.connectivity.jpa.dao.impl.PushApplicationDaoImpl;
+import org.jboss.aerogear.connectivity.model.PushApplication;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.UsingDataSet;
