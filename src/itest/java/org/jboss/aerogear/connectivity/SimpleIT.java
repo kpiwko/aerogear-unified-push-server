@@ -44,7 +44,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class SimpleTest {
+public class SimpleIT {
 
     @Deployment
     public static Archive<?> testArchive() {
