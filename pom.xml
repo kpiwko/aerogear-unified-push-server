@@ -545,7 +545,7 @@
             </dependencies>
 
             <build>
-                <!-- JBoss EAP 6.0.1 is not hosted in any Maven repository, you have to unpack it manually -->
+                <!-- JBoss EAP 6.1.0 is not hosted in any Maven repository, you have to unpack it manually -->
             </build>
         </profile>
     </profiles>
