@@ -23,6 +23,10 @@ import com.jayway.restassured.RestAssured
 // FIXME this should be done via inheritance, see https://issues.jboss.org/browse/ARQ-1427
 class AdminLogin {
 
+    //    curl -v -b cookies.txt -c cookies.txt
+    //    -H "Accept: application/json" -H "Content-type: application/json"
+    //    -X POST -d '{"loginName": "admin", "password":"123"}'
+    //    http://localhost:8080/ag-push/rest/auth/login
     def login() {
         assert root !=null
 
