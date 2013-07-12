@@ -209,6 +209,36 @@ http://localhost:8080/ag-push/rest/sender/selected
 
 **TODO:** Add link to message format spec (once published)
 
+## Automated Testing
+
+Unified Push Server contains unit tests that can be run via Maven: 
+
+```
+mvn test
+```
+
+It also contains integration tests, stored in _src/itest/groovy_, that are can be run via Maven:
+
+```
+mvn verify
+```
+
+### Writing new tests
+
+Here are few tips that might help you when developing new tests for Unified Push Server:
+
+* To speed up test development, you can start application server on your own instead of relying on Arquillian.
+  You need to activate Maven profile _as711-remoting_ to connect to the running instance.
+
+* If you need to debug REST requests, simply add following line in _setupSpec_ method
+
+	```
+	RestAssured.filters(new RequestLoggingFilter(System.err), new ResponseLoggingFilter(System.err))
+	```
+
+* IntelliJ Idea uses different working directory than Maven, so Unified Push Server Application might not get deployed from tests. In order to fix that,
+  you have to modify configuration In Run->Edit configuration->Defaults->JUnit->Working directory set the value to the MODULE_DIR. If it does not help, 
+  set absolute path per each module.
 
 ## More details
 

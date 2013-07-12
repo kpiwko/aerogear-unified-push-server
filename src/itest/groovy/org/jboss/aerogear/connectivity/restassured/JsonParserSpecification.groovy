@@ -25,7 +25,6 @@ class JsonParserSpecification extends Specification {
     def "JSON map and non-map syntax"() {
         given: "Two JSON builders"
         def json = new JsonBuilder();
-        def json2 = new JsonBuilder();
 
         when: "Creating a JSON using map and non-map syntax"
         def string1 = JsonOutput.toJson(json.call() {
@@ -38,10 +37,15 @@ class JsonParserSpecification extends Specification {
             name "namebar"
         });
 
+        def string3 = JsonOutput.toJson([foo:"bar", name:"namebar"])
+
         then: "Map syntax yields empty JSON object"
         string1 == "{}"
 
         and: "Non-map syntax yields correct JSON object"
         string2 == '{"foo":"bar","name":"namebar"}'
+
+        and: "Non JSON Map syntax yields correct JSON object"
+        string3 == string2
     }
 }

@@ -52,13 +52,12 @@
             </dependency>
 
             <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill of Materials (BOM). A BOM specifies the versions
-                of a "stack" (or a collection) of artifacts. We use this here so that we always get the correct versions of artifacts.
-                Here we use
-                the jboss-javaee-6.0 stack (you can read this as the JBoss stack of the Java EE 6 APIs) -->
+                 of a "stack" (or a collection) of artifacts. We use this here so that we always get the correct versions of artifacts. Here we use
+                 the jboss-javaee-6.0 stack (you can read this as the JBoss stack of the Java EE 6 APIs) -->
 
             <!-- This BOM builds on the Java EE full profile BOM, adding Arquillian to the mix. It also provides a
-                version of JUnit and TestNG recommended for use with Arquillian.
-                see https://github.com/jboss/jboss-bom/tree/master/jboss-javaee-6.0-with-tools -->
+                 version of JUnit and TestNG recommended for use with Arquillian.
+                 see https://github.com/jboss/jboss-bom/tree/master/jboss-javaee-6.0-with-tools -->
             <dependency>
                 <groupId>org.jboss.bom</groupId>
                 <artifactId>jboss-javaee-6.0-with-tools</artifactId>
@@ -83,7 +82,7 @@
             <scope>provided</scope>
         </dependency>
         <!-- Import the CDI API, we use provided scope as the API is included
-            in JBoss AS 7 -->
+      in JBoss AS 7 -->
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
@@ -96,7 +95,7 @@
         </dependency>
 
         <!-- Import the EJB API, we use provided scope as the API is included
-            in JBoss -->
+      in JBoss -->
         <dependency>
             <groupId>org.jboss.spec.javax.ejb</groupId>
             <artifactId>jboss-ejb-api_3.1_spec</artifactId>
@@ -104,7 +103,7 @@
         </dependency>
 
         <!-- Import the Common Annotations API (JSR-250), we use provided scope
-            as the API is included in JBoss AS 7 -->
+             as the API is included in JBoss AS 7 -->
         <dependency>
             <groupId>org.jboss.spec.javax.annotation</groupId>
             <artifactId>jboss-annotations-api_1.1_spec</artifactId>
@@ -120,7 +119,7 @@
         </dependency>
 
         <!-- Import the JPA API, we use provided scope as the API is included
-            in JBoss -->
+      in JBoss -->
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
@@ -209,7 +208,7 @@
             <groupId>org.jboss.arquillian.spock</groupId>
             <artifactId>arquillian-spock-container</artifactId>
             <scope>test</scope>
-            <version>1.0.0.Beta1</version>
+            <version>1.0.0.Final-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -385,6 +384,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <testSourceDirectory>${project.basedir}/src/itest/groovy</testSourceDirectory>
+                    <argLine>-Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties</argLine>
                     <includes>
                         <include>**/*Specification*</include>
                     </includes>

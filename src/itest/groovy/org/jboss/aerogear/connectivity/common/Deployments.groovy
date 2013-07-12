@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.spec.WebArchive
@@ -26,14 +26,8 @@ class Deployments {
 
         def unifiedPushServerPom = System.getProperty("unified.push.server.location", "pom.xml")
 
-        WebArchive war = ShrinkWrap.create(MavenImporter.class).loadPomFromFile(unifiedPushServerPom).importBuildOutput()
+        return ShrinkWrap.create(MavenImporter.class).loadPomFromFile(unifiedPushServerPom).importBuildOutput()
         .as(WebArchive.class);
-
-        // replace original persistence.xml with testing one
-        war.delete("/WEB-INF/classes/META-INF/persistence.xml")
-        // testing persistence
-        war.addAsResource("META-INF/persistence.xml")
-        return war
     }
 }
 
