@@ -18,24 +18,12 @@ package org.jboss.aerogear.connectivity.pushapp;
 
 import groovy.json.JsonBuilder
 
-import org.jboss.arquillian.container.test.api.Deployment
+import org.jboss.aerogear.connectivity.common.AerogearSpecification
 import org.jboss.arquillian.spock.ArquillianSpecification
-import org.jboss.arquillian.test.api.ArquillianResource
-import org.jboss.connectivity.common.AdminLogin
-import org.jboss.connectivity.common.Deployments
-import org.jboss.shrinkwrap.api.spec.WebArchive
 
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 import com.jayway.restassured.RestAssured
-import com.jayway.restassured.config.DecoderConfig;
-import com.jayway.restassured.config.EncoderConfig;
-import com.jayway.restassured.config.LogConfig
-import com.jayway.restassured.config.RestAssuredConfig;
-import com.jayway.restassured.filter.log.RequestLoggingFilter
-import com.jayway.restassured.filter.log.ResponseLoggingFilter
 
 /**
  *
@@ -43,33 +31,7 @@ import com.jayway.restassured.filter.log.ResponseLoggingFilter
  *
  */
 @ArquillianSpecification
-@Mixin(AdminLogin)
-class RegisterPushAppSpecification extends Specification {
-
-    @ArquillianResource
-    URL root
-
-    @Deployment(testable=false)
-    def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServer()
-    }
-
-    @Shared def authCookies
-
-    def setupSpec() {
-        // enable logging
-        RestAssured.filters(new RequestLoggingFilter(System.err), new ResponseLoggingFilter(System.err))
-        // RestAssured uses ISO-8859-1 by default to encode all the stuff, this is not the same as curl does
-        // so we are changing RestAssuredConfiguration in order to change encoded/decoder config
-        // see https://code.google.com/p/rest-assured/wiki/ReleaseNotes16
-        RestAssured.config = RestAssuredConfig.newConfig()
-                .decoderConfig(DecoderConfig.decoderConfig().defaultContentCharset("UTF-8"))
-                .encoderConfig(EncoderConfig.encoderConfig().defaultContentCharset("UTF-8"))
-    }
-
-    def setup() {
-        authCookies = authCookies ? authCookies : login()
-    }
+class RegisterPushAppSpecification extends AerogearSpecification {
 
     // curl -v -b cookies.txt -c cookies.txt -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name" : "MyApp", "description" :  "awesome app" }'
     // http://localhost:8080/ag-push/rest/applications
@@ -136,49 +98,12 @@ class RegisterPushAppSpecification extends Specification {
         body.get("name") == appName
 
         where:
-        appName << [
-            "AwesomeAppěščřžýáíéňľ",
-            "AwesomeAppவான்வழி",
-            "AwesomeAppěščřžýáíéňľ",
-            "AwesomeAppவான்வழி"
-        ]
-        contentType << [
-            "application/json",
-            "application/json; charset=utf-8",
-            "application/json",
-            "application/json; charset=utf-8"
-        ]
-
+        appName                 | contentType
+        "AwesomeAppěščřžýáíéňľ" | "application/json; charset=utf-8"
+        "AwesomeAppவான்வழிe"   |  "application/json; charset=utf-8"
+        "AwesomeAppěščřžýáíéňľ" | "application/json"
+        "AwesomeAppவான்வழிe"   | "application/json"
     }
 
-    // note, in json description we cannot use GString ("Description of ${appName}")
-    // as it is converted to JSON a different way
-    /*
-     @Unroll
-     def "Registering a push application with UTF8 Name - no charset"() {
-     given: "Application ${appName} is about to be registered"
-     def json = new JsonBuilder()
-     def request = RestAssured.given()
-     .contentType("application/json")
-     .header("Accept", "application/json")
-     .cookies(authCookies)
-     .body( json {
-     name appName
-     description "Description of" + appName
-     })
-     when: "Application ${appName} is registered"
-     def response = RestAssured.given().spec(request).post("${root}rest/applications")
-     def body = response.body().jsonPath()
-     then: "Response code 201 is returned"
-     response.statusCode() == 400
-     and: "Response contains"
-     response.body().asString().contains("Invalid UTF-8 start byte")
-     where:
-     appName << [
-     "AwesomeAppěščřžýáíéňľ",
-     "AwesomeAppவான்வழி"
-     ]
-     }
-     */
 
 }

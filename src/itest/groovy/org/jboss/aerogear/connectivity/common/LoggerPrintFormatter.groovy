@@ -14,20 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
-import org.jboss.shrinkwrap.api.ShrinkWrap
-import org.jboss.shrinkwrap.api.spec.WebArchive
-import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter
+import java.util.logging.LogRecord
 
-class Deployments {
+class LoggerPrintFormatter extends java.util.logging.Formatter {
 
-    def static WebArchive unifiedPushServer() {
-
-        def unifiedPushServerPom = System.getProperty("unified.push.server.location", "pom.xml")
-
-        return ShrinkWrap.create(MavenImporter.class).loadPomFromFile(unifiedPushServerPom).importBuildOutput()
-        .as(WebArchive.class);
+    @Override
+    public String format(LogRecord record) {
+        String format = record.getMessage();
+        return format + "\n";
     }
 }
-
