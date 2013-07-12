@@ -18,15 +18,10 @@ package org.jboss.aerogear.connectivity.pushapp
 
 import groovy.json.JsonBuilder
 
-import org.jboss.arquillian.container.test.api.Deployment
+import org.jboss.aerogear.connectivity.common.AerogearSpecification
 import org.jboss.arquillian.spock.ArquillianSpecification
-import org.jboss.arquillian.test.api.ArquillianResource
-import org.jboss.connectivity.common.AdminLogin
-import org.jboss.connectivity.common.Deployments
-import org.jboss.shrinkwrap.api.spec.WebArchive
 
 import spock.lang.Shared
-import spock.lang.Specification
 
 import com.jayway.restassured.RestAssured
 
@@ -39,24 +34,10 @@ import com.jayway.restassured.RestAssured
  *
  */
 @ArquillianSpecification
-@Mixin(AdminLogin)
-class RegisterMobileVariantsSpecification extends Specification {
-
-    @ArquillianResource
-    URL root
-
-    @Deployment(testable=false)
-    def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServer()
-    }
+class RegisterMobileVariantsSpecification extends AerogearSpecification {
 
     // push application ID is reused in registering mobile variant
     @Shared def pushAppId
-    @Shared def authCookies
-
-    def setup() {
-        authCookies = authCookies ? authCookies : login()
-    }
 
     // curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name" : "ddd", "description" :  "ddd" }' http://localhost:8080/ag-push/rest/
     def "Registering a push application"() {
