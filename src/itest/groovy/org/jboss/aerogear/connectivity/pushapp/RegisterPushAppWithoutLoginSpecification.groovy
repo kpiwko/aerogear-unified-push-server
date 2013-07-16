@@ -14,43 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.aerogear.connectivity.simplepush;
+package org.jboss.aerogear.connectivity.pushapp;
 
 
-import com.jayway.restassured.RestAssured
 import groovy.json.JsonBuilder
+
+import org.jboss.aerogear.connectivity.common.AerogearSpecification
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
 import org.jboss.arquillian.test.api.ArquillianResource
-import org.jboss.connectivity.common.AdminLogin
-import org.jboss.connectivity.common.Deployments
 import org.jboss.shrinkwrap.api.spec.WebArchive
-import spock.lang.Shared
-import spock.lang.Specification
-import com.jayway.restassured.filter.log.RequestLoggingFilter
-import com.jayway.restassured.filter.log.ResponseLoggingFilter
-import org.apache.http.entity.ContentType
+
+import com.jayway.restassured.RestAssured
 
 @ArquillianSpecification
-@Mixin(AdminLogin)
-class RegisterPushAppWithoutLoginSpecification extends Specification {
-
-    @ArquillianResource
-    URL root
-
-    @Deployment(testable=false)
-    def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServer()
-    }
-
-    def setup() {
-        //RestAssured.filters(new RequestLoggingFilter(System.err), new ResponseLoggingFilter(System.err))
-    }
+class RegisterPushAppWithoutLoginSpecification extends AerogearSpecification {
 
     def "Registering a push application without being logged"() {
 
         given: "Trying to register application My App"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")

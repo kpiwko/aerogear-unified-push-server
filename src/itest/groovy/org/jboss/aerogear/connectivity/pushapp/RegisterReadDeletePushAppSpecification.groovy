@@ -14,55 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.aerogear.connectivity.simplepush;
+package org.jboss.aerogear.connectivity.pushapp;
 
 
-import com.jayway.restassured.RestAssured
-import com.jayway.restassured.filter.log.RequestLoggingFilter
-import com.jayway.restassured.filter.log.ResponseLoggingFilter
-import groovy.json.JsonBuilder
-import org.jboss.arquillian.container.test.api.Deployment
-import org.jboss.arquillian.spock.ArquillianSpecification
-import org.jboss.arquillian.test.api.ArquillianResource
-import org.jboss.connectivity.common.AdminLogin
-import org.jboss.connectivity.common.Deployments
-import org.jboss.shrinkwrap.api.spec.WebArchive
-import spock.lang.Shared
-import spock.lang.Specification
-import javax.inject.Inject
-import org.jboss.aerogear.connectivity.jpa.dao.PushApplicationDao
-import javax.enterprise.inject.Produces
-import javax.persistence.PersistenceContext
-import javax.persistence.PersistenceContextType
-import javax.enterprise.inject.Default
-import javax.persistence.EntityManager
 import groovy.json.JsonSlurper
 
+import org.jboss.aerogear.connectivity.common.AerogearSpecification
+import org.jboss.arquillian.spock.ArquillianSpecification
+
+import spock.lang.Shared
+
+import com.jayway.restassured.RestAssured
+
 @ArquillianSpecification
-@Mixin(AdminLogin)
-class RegisterReadDeletePushAppSpecification extends Specification {
+class RegisterReadDeletePushAppSpecification extends AerogearSpecification {
 
-
-    @ArquillianResource
-    URL root
-
-    @Deployment(testable=false)
-    def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServer()
-    }
-
-    @Shared def authCookies
     @Shared def pushAppId
-
-    def setup() {
-        authCookies = authCookies ? authCookies : login()
-        RestAssured.filters(new RequestLoggingFilter(System.err), new ResponseLoggingFilter(System.err))
-    }
 
     def "Registering a push application"() {
 
         given: "Application RegisterReadDeletePushAppSpecification is about to be registered"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
@@ -141,7 +112,6 @@ class RegisterReadDeletePushAppSpecification extends Specification {
     def "Delete registered push app"() {
 
         given: "Delete RegisterReadDeletePushAppSpecification"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
