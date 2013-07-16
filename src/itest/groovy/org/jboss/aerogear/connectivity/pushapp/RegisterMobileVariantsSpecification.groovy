@@ -43,7 +43,6 @@ class RegisterMobileVariantsSpecification extends AerogearSpecification {
     def "Registering a push application"() {
 
         given: "Application ddd is about to be registered......"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
@@ -73,7 +72,6 @@ class RegisterMobileVariantsSpecification extends AerogearSpecification {
     def "Registering a SimplePush variant instance"() {
 
         given: "SimplePush variant of ddd application is about to be registered......"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
@@ -108,7 +106,6 @@ class RegisterMobileVariantsSpecification extends AerogearSpecification {
     //    -X POST http://localhost:8080/ag-push/rest/applications/{PUSH_ID}/iOS
     def "Registering an iOS mobile variant instance"() {
         given: "iOS variant of ddd application is about to be registered......"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("multipart/form-data")
                 .header("Accept", "application/json")
@@ -139,7 +136,6 @@ class RegisterMobileVariantsSpecification extends AerogearSpecification {
     //  http://localhost:8080/ag-push/rest/applications/{PUSH_ID}/android
     def "Registering an Android mobile variant instance"() {
         given: "Android variant of ddd application is about to be registered......"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")

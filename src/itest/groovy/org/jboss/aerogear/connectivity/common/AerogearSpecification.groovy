@@ -17,6 +17,7 @@
 package org.jboss.aerogear.connectivity.common
 
 import groovy.json.JsonBuilder
+import groovy.lang.Closure;
 
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.test.api.ArquillianResource
@@ -43,11 +44,27 @@ class AerogearSpecification extends Specification {
         Deployments.unifiedPushServer()
     }
 
+    // contains URL to the deployment application
     @ArquillianResource
     URL root
 
+    // contains cookies with authorization
     @Shared
     def authCookies
+
+    // enable direct invocation of json closure to all test writers
+    // to construct Json objects in very simple DSL like way
+    //
+    // json {
+    //   name "ddd"
+    //   description "ddd"
+    // }
+    //
+    def Closure json = new Closure(this, this) {
+        def doCall(Object args) {
+            new JsonBuilder().call(args)
+        }
+    }
 
     def setupSpec() {
         // enable logging
@@ -71,19 +88,16 @@ class AerogearSpecification extends Specification {
         authCookies = authCookies ? authCookies : login()
     }
 
-
     //    curl -v -b cookies.txt -c cookies.txt
     //    -H "Accept: application/json" -H "Content-type: application/json"
     //    -X POST -d '{"loginName": "admin", "password":"123"}'
     //    http://localhost:8080/ag-push/rest/auth/login
     def login() {
         assert root !=null
-
-        def json = new JsonBuilder()
         def response = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
-                .body( json {
+                .body( json() {
                     loginName "admin"
                     password "123"
                 })

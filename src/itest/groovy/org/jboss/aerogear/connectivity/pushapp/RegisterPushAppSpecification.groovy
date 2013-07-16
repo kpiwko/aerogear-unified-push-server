@@ -38,7 +38,6 @@ class RegisterPushAppSpecification extends AerogearSpecification {
     def "Registering a push application"() {
 
         given: "Application is about to be registered"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
@@ -71,7 +70,6 @@ class RegisterPushAppSpecification extends AerogearSpecification {
     def "Registering a push application with UTF8"() {
 
         given: "Application ${appName} is about to be registered"
-        def json = new JsonBuilder()
         def request = RestAssured.given()
                 .contentType(contentType)
                 .header("Accept", "application/json")
