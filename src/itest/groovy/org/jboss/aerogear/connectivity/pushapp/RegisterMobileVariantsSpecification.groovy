@@ -25,14 +25,6 @@ import spock.lang.Shared
 
 import com.jayway.restassured.RestAssured
 
-
-/**
- *
- * @author <a href="milow-w@live.fr">rozaxe</a>
- * @author <a href="ckrych@redhat.com">Corinne Krych</a>
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
- */
 @ArquillianSpecification
 class RegisterMobileVariantsSpecification extends AerogearSpecification {
 

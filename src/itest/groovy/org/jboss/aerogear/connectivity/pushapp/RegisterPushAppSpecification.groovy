@@ -25,11 +25,6 @@ import spock.lang.Unroll
 
 import com.jayway.restassured.RestAssured
 
-/**
- *
- * @author <a href="kpiwko@redhat.com">Karel Piwko</a>
- *
- */
 @ArquillianSpecification
 class RegisterPushAppSpecification extends AerogearSpecification {
 
