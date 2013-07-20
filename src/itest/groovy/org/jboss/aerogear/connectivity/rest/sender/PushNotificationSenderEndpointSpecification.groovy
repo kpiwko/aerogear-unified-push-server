@@ -168,7 +168,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
     @RunAsClient
     def "test method"() {
         when:
-        authCookies = login("admin", "123").getCookies()
+        authCookies = login(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD).getCookies()
         
         then:
         authCookies != null
