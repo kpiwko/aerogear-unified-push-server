@@ -14,44 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
-import groovy.json.JsonBuilder;
+import groovy.json.JsonBuilder
 
-import java.util.Map;
+import org.jboss.aerogear.connectivity.model.SimplePushVariant
 
-import org.jboss.aerogear.connectivity.model.AndroidVariant;
+import com.jayway.restassured.RestAssured
 
-import com.jayway.restassured.RestAssured;
+class SimplePushVariantUtils {
 
-class AndroidVariantUtils {
-
-    def createAndroidVariant(String name, String description, String variantID, String secret,
-            String developer, String googleKey) {
-        AndroidVariant variant = new AndroidVariant();
+    def createSimplePushVariant(String name, String description, String variantID, String secret,
+            String developer, String pushNetworkURL) {
+        SimplePushVariant variant = new SimplePushVariant();
         variant.setName(name)
         variant.setDescription(description)
         variant.setVariantID(variantID)
         variant.setSecret(secret)
         variant.setDeveloper(developer)
-        variant.setGoogleKey(googleKey)
+        variant.setPushNetworkURL(pushNetworkURL)
         return variant
     }
 
-    def registerAndroidVariant(String pushAppId, AndroidVariant variant, Map<String, ?> cookies) {
-        
+    def registerSimplePushVariant(String pushAppId, SimplePushVariant variant, Map<String, ?> cookies) {
+
         assert root !=null
-        
+
         JsonBuilder json = new JsonBuilder()
         def response = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
                 .cookies(cookies)
                 .body( json {
-                    googleKey variant.getGoogleKey()
                     name variant.getName()
                     description variant.getDescription()
-                }).post("${root}rest/applications/${pushAppId}/android")
+                    pushNetworkURL variant.getPushNetworkURL()
+                }).post("${root}rest/applications/${pushAppId}/simplePush")
 
         return response
     }

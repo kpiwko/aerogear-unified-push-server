@@ -37,10 +37,10 @@ import org.jboss.aerogear.connectivity.service.ClientInstallationService;
 import org.jboss.aerogear.connectivity.users.Developer
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
-import org.jboss.connectivity.common.AndroidVariantUtils;
-import org.jboss.connectivity.common.Deployments
-import org.jboss.connectivity.common.InstallationUtils;
-import org.jboss.connectivity.common.PushApplicationUtils;
+import org.jboss.aerogear.connectivity.common.AndroidVariantUtils;
+import org.jboss.aerogear.connectivity.common.Deployments
+import org.jboss.aerogear.connectivity.common.InstallationUtils;
+import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.picketlink.common.util.Base64
 

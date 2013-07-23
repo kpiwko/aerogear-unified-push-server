@@ -29,7 +29,7 @@ import org.jboss.aerogear.security.auth.AuthenticationManager
 import org.jboss.aerogear.security.authz.IdentityManagement
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
-import org.jboss.connectivity.common.Deployments
+import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

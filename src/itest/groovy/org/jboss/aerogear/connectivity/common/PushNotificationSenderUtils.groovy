@@ -14,16 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
-import groovy.json.JsonBuilder;
+import groovy.json.JsonBuilder
 
-import java.util.List;
-import java.util.Map;
-
-import org.jboss.aerogear.connectivity.model.InstallationImpl;
-
-import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.RestAssured
 
 class PushNotificationSenderUtils {
 
@@ -43,7 +38,7 @@ class PushNotificationSenderUtils {
                     deviceType deviceTypes
                     message messages
                     "simple-push" simplePush
-                }).post("${root}rest/sender/selected ")
+                }).post("${root}rest/sender/selected")
 
         return response
     }
