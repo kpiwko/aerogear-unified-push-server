@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
-import groovy.json.JsonBuilder;
-
-import java.util.Map;
+import groovy.json.JsonBuilder
 
 import org.jboss.aerogear.connectivity.model.PushApplication
 
-import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.RestAssured
 
 class PushApplicationUtils {
 

@@ -37,7 +37,7 @@ import org.jboss.aerogear.connectivity.service.AndroidVariantService;
 import org.jboss.aerogear.connectivity.users.Developer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.spock.ArquillianSpecification;
-import org.jboss.connectivity.common.Deployments;
+import org.jboss.aerogear.connectivity.common.Deployments;
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -351,12 +351,12 @@ class AndroidVariantEndpointSpecification extends Specification {
         and:
         "Deletes and Android variant"
         def deleteResponse = androidVariantEndpoint.deleteAndroidVariation(pushAppId,
-                    androidVariantId)
+                androidVariantId)
 
         "Searches for the deleted Android variant"
         def findByIdResponse = androidVariantEndpoint.findAndroidVariationById(pushAppId,
-            androidVariantId)
-        
+                androidVariantId)
+
         then:
         "Injections have been performed"
         pushApplicationEndpoint!=null && androidVariantEndpoint != null && androidVariantService != null

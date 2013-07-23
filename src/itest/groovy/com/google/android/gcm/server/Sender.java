@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.jboss.connectivity.common.SenderSimulation;
+import org.jboss.aerogear.connectivity.common.SenderSimulation;
 
 @SenderSimulation
 @ApplicationScoped

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.spec.WebArchive
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven
 import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter
 
 class Deployments {
@@ -45,12 +45,6 @@ class Deployments {
 
         war.delete("/WEB-INF/classes/META-INF/persistence.xml")
         war.addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml")
-
-        //war.delete("/WEB-INF/classes/META-INF/beans.xml")
-        //war.addAsResource("META-INF/beans.xml", "META-INF/beans.xml")
-
-        //war.delete("/WEB-INF/h2-ds.xml")
-        //war.addAsWebInfResource("WEB-INF/test-h2-ds.xml", "h2-ds.xml")
 
         war.addClasses(clazz)
 

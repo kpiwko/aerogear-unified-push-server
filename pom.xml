@@ -212,19 +212,40 @@
             <artifactId>arquillian-protocol-servlet</artifactId>
             <scope>test</scope>
         </dependency>
-
+        
+        <!-- Exclude jackson artifacts to avoid conflict with APNS jackson dependencies -->
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
-            <version>1.8.0</version>
+            <version>1.8.1</version>
+                <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.jackson</groupId>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>json-path</artifactId>
             <scope>test</scope>
-            <version>1.8.0</version>
+            <version>1.8.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.jackson</groupId>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -260,7 +281,6 @@
             <version>1.7.5</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.jayway.awaitility</groupId>
             <artifactId>awaitility-groovy</artifactId>

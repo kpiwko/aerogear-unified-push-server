@@ -14,27 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common;
 
-import com.jayway.restassured.RestAssured;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import groovy.json.JsonBuilder;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-class AuthenticationUtils {
+import javax.inject.Qualifier;
 
-    def login(String loginNameStr, String passwordStr) {
-        
-        assert root !=null
-        
-        JsonBuilder json = new JsonBuilder()
-        def response = RestAssured.given()
-                .contentType("application/json")
-                .header("Accept", "application/json")
-                .body( json {
-                    loginName loginNameStr
-                    password passwordStr
-                }).post("${root}rest/auth/login")
-
-        return response
-    }
+@Qualifier
+@Retention(RUNTIME)
+@Target({ TYPE, METHOD, FIELD, PARAMETER })
+public @interface SenderSimulation {
 }

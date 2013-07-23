@@ -14,43 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
 import groovy.json.JsonBuilder
 
 import org.jboss.aerogear.connectivity.model.AndroidVariant
-import org.jboss.aerogear.connectivity.model.SimplePushVariant
 
 import com.jayway.restassured.RestAssured
 
-class SimplePushVariantUtils {
+class AndroidVariantUtils {
 
-    def createSimplePushVariant(String name, String description, String variantID, String secret,
-            String developer, String pushNetworkURL) {
-        SimplePushVariant variant = new SimplePushVariant();
+    def createAndroidVariant(String name, String description, String variantID, String secret,
+            String developer, String googleKey) {
+        AndroidVariant variant = new AndroidVariant();
         variant.setName(name)
         variant.setDescription(description)
         variant.setVariantID(variantID)
         variant.setSecret(secret)
         variant.setDeveloper(developer)
-        variant.setPushNetworkURL(pushNetworkURL)
+        variant.setGoogleKey(googleKey)
         return variant
     }
 
-    def registerSimplePushVariant(String pushAppId, SimplePushVariant variant, Map<String, ?> cookies) {
-
+    def registerAndroidVariant(String pushAppId, AndroidVariant variant, Map<String, ?> cookies) {
+        
         assert root !=null
-
+        
         JsonBuilder json = new JsonBuilder()
         def response = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
                 .cookies(cookies)
                 .body( json {
+                    googleKey variant.getGoogleKey()
                     name variant.getName()
                     description variant.getDescription()
-                    pushNetworkURL variant.getPushNetworkURL()
-                }).post("${root}rest/applications/${pushAppId}/simplePush")
+                }).post("${root}rest/applications/${pushAppId}/android")
 
         return response
     }

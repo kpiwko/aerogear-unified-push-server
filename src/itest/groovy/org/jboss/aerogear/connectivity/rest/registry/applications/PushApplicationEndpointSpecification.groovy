@@ -28,7 +28,7 @@ import org.jboss.aerogear.connectivity.service.PushApplicationService;
 import org.jboss.aerogear.connectivity.users.Developer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.spock.ArquillianSpecification;
-import org.jboss.connectivity.common.Deployments;
+import org.jboss.aerogear.connectivity.common.Deployments;
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
