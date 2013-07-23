@@ -18,14 +18,16 @@ package org.jboss.aerogear.connectivity.common
 
 import groovy.json.JsonBuilder
 
+import org.jboss.aerogear.connectivity.users.Developer
+
 import com.jayway.restassured.RestAssured
 
 class AuthenticationUtils {
 
     def login(String loginNameStr, String passwordStr) {
-        
+
         assert root !=null
-        
+
         JsonBuilder json = new JsonBuilder()
         def response = RestAssured.given()
                 .contentType("application/json")
@@ -36,5 +38,12 @@ class AuthenticationUtils {
                 }).post("${root}rest/auth/login")
 
         return response
+    }
+
+    def createDeveloper(String loginName, String password) {
+        def developer = new Developer()
+        developer.setLoginName(loginName)
+        developer.setPassword(password)
+        return developer
     }
 }
