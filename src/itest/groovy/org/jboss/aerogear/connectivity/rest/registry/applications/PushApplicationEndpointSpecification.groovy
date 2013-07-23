@@ -28,7 +28,9 @@ import org.jboss.aerogear.connectivity.service.PushApplicationService;
 import org.jboss.aerogear.connectivity.users.Developer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.spock.ArquillianSpecification;
+import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments;
+import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -39,6 +41,7 @@ import spock.lang.Shared;
 import spock.lang.Specification;
 
 @ArquillianSpecification
+@Mixin([PushApplicationUtils, AuthenticationUtils])
 class PushApplicationEndpointSpecification extends Specification {
 
     @Inject
@@ -52,23 +55,24 @@ class PushApplicationEndpointSpecification extends Specification {
 
     @Shared private static String pushAppId
 
-    private static final String PUSH_APPLICATION_NAME = "TestApp"
+    private static final String PUSH_APPLICATION_NAME = "TestPushApp"
 
-    private static final String PUSH_APPLICATION_DESC = "awesome app"
+    private static final String PUSH_APPLICATION_DESC = "Awesome push application"
 
-    private static final String PUSH_APPLICATION_UPDATED_NAME = "TestAppUpdated"
+    private static final String PUSH_APPLICATION_UPDATED_NAME = "UpdatedTestPushApp"
 
-    private static final String PUSH_APPLICATION_UPDATED_DESC = "awesome app updated"
+    private static final String PUSH_APPLICATION_UPDATED_DESC = "Updated awesome push application"
 
     private static final String AUTHORIZED_LOGIN_NAME = "admin"
 
     private static final String AUTHORIZED_PASSWORD = "123"
 
-    private static final String NOT_EXISTING_PUSH_ID = "1234567890a"
+    private static final String NOT_EXISTING_PUSH_ID = "1234567890__"
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServerWithClasses(PushApplicationEndpointSpecification.class)
+        Deployments.unifiedPushServerWithClasses(PushApplicationEndpointSpecification.class, PushApplicationUtils.class,
+            AuthenticationUtils.class)
     }
 
     def "test unauthorized registration"() {
@@ -155,11 +159,11 @@ class PushApplicationEndpointSpecification extends Specification {
 
         given:
         "A Push Application"
-        def PushApplication pushApp = buildPushApplication(PUSH_APPLICATION_NAME, PUSH_APPLICATION_DESC)
+        def pushApp = createPushApplication(PUSH_APPLICATION_NAME, PUSH_APPLICATION_DESC, null, null, null)
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Registers the push application"
@@ -189,7 +193,7 @@ class PushApplicationEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Lists all the registered push applications"
@@ -221,7 +225,7 @@ class PushApplicationEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Searches for a registered a push application by id"
@@ -253,11 +257,11 @@ class PushApplicationEndpointSpecification extends Specification {
 
         given:
         "Updated push application"
-        def PushApplication updatedPushApp = buildPushApplication(PUSH_APPLICATION_UPDATED_NAME, PUSH_APPLICATION_UPDATED_DESC)
+        def updatedPushApp = createPushApplication(PUSH_APPLICATION_UPDATED_NAME, PUSH_APPLICATION_UPDATED_DESC, null, null, null)
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Updates a registered push application"
@@ -301,7 +305,7 @@ class PushApplicationEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Deletes push application by id"
@@ -332,12 +336,12 @@ class PushApplicationEndpointSpecification extends Specification {
         foundPushApp == null
     }
 
-    private void login() {
-        Developer developer = buildDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
+    def adminLogin() {
+        def developer = createDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
         Response response = authenticationEndpoint.login(developer)
     }
 
-    private boolean appIdExistsInList(String pushAppId, List<PushApplication> pushAppsList) {
+    def appIdExistsInList(String pushAppId, List<PushApplication> pushAppsList) {
         if (!StringUtils.isEmpty(pushAppId) && pushAppsList != null) {
             for (PushApplication pushApp : pushAppsList) {
                 if (pushApp != null && pushAppId.equals(pushApp.getPushApplicationID())) {
@@ -348,17 +352,4 @@ class PushApplicationEndpointSpecification extends Specification {
         return false
     }
 
-    private Developer buildDeveloper(String loginName, String password) {
-        Developer developer = new Developer()
-        developer.setLoginName(loginName)
-        developer.setPassword(password)
-        return developer
-    }
-
-    private PushApplication buildPushApplication(String name, String description) {
-        PushApplication pushApp = new PushApplication()
-        pushApp.setName(name)
-        pushApp.setDescription(description)
-        return pushApp
-    }
 }

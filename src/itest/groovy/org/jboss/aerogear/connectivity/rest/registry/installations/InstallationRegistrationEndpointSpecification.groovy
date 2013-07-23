@@ -38,6 +38,7 @@ import org.jboss.aerogear.connectivity.users.Developer
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
 import org.jboss.aerogear.connectivity.common.AndroidVariantUtils;
+import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.aerogear.connectivity.common.InstallationUtils;
 import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
@@ -48,13 +49,13 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 @ArquillianSpecification
-@Mixin([PushApplicationUtils, AndroidVariantUtils, InstallationUtils])
+@Mixin([AuthenticationUtils, PushApplicationUtils, AndroidVariantUtils, InstallationUtils])
 class InstallationRegistrationEndpointSpecification extends Specification {
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
         Deployments.unifiedPushServerWithClasses(InstallationRegistrationEndpointSpecification.class, 
-            PushApplicationUtils.class, AndroidVariantUtils.class, InstallationUtils.class)
+            AuthenticationUtils.class, PushApplicationUtils.class, AndroidVariantUtils.class, InstallationUtils.class)
     }
 
     @Shared private static String pushAppId
@@ -114,7 +115,7 @@ class InstallationRegistrationEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Registers the push application"
@@ -180,7 +181,7 @@ class InstallationRegistrationEndpointSpecification extends Specification {
                 ANDROID_DEVICE_OS_VERSION, ANDROID_CLIENT_ALIAS, "")
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Unregisters a mobile variant instance"
@@ -218,9 +219,9 @@ class InstallationRegistrationEndpointSpecification extends Specification {
         return mockHttpRequest;
     }
 
-    private void login() {
+    def adminLogin() {
         // test default login
-        Developer developer = buildDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD);
+        def developer = createDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD);
         Response response = authenticationEndpoint.login(developer);
     }
 
@@ -237,13 +238,6 @@ class InstallationRegistrationEndpointSpecification extends Specification {
             e.printStackTrace();
         }
         return uriInfo;
-    }
-
-    private Developer buildDeveloper(String loginName, String password) {
-        Developer developer = new Developer();
-        developer.setLoginName(loginName);
-        developer.setPassword(password);
-        return developer;
     }
 
 }

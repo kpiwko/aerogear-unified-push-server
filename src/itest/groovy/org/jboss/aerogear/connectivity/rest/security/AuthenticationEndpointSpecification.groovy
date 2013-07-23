@@ -29,6 +29,7 @@ import org.jboss.aerogear.security.auth.AuthenticationManager
 import org.jboss.aerogear.security.authz.IdentityManagement
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.Filters;
@@ -44,6 +45,7 @@ import org.picketlink.idm.model.SimpleUser;
 import spock.lang.Specification
 
 @ArquillianSpecification
+@Mixin(AuthenticationUtils)
 class AuthenticationEndpointSpecification extends Specification {
 
     @Inject
@@ -69,13 +71,13 @@ class AuthenticationEndpointSpecification extends Specification {
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServerWithClasses(AuthenticationEndpointSpecification.class);
+        Deployments.unifiedPushServerWithClasses(AuthenticationEndpointSpecification.class, AuthenticationUtils.class);
     }
 
     def "verify admin login"() {
         given:
         "Admin developer"
-        def developer = buildDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
+        def developer = createDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
 
         when:
         "Performing Login"
@@ -101,8 +103,8 @@ class AuthenticationEndpointSpecification extends Specification {
     def "test authorized enroll endpoint"() {
         given:
         "Developers"
-        def admin = buildDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
-        def developer = developer = buildDeveloper(ENROLL_LOGIN_NAME, ENROLL_PASSWORD)
+        def admin = createDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
+        def developer = createDeveloper(ENROLL_LOGIN_NAME, ENROLL_PASSWORD)
 
         when:
         "Performing Login"
@@ -144,7 +146,7 @@ class AuthenticationEndpointSpecification extends Specification {
     def "test login using wrong credentials"() {
         given:
         "Non existing developer"
-        def developer = buildDeveloper(UNAUTHORIZED_LOGIN_NAME, UNAUTHORIZED_PASSWORD)
+        def developer = createDeveloper(UNAUTHORIZED_LOGIN_NAME, UNAUTHORIZED_PASSWORD)
 
         when:
         "Performing Login"
@@ -162,7 +164,7 @@ class AuthenticationEndpointSpecification extends Specification {
     def "test enroll without being logged in"() {
         given:
         "Non existing developer"
-        def developer = buildDeveloper(UNAUTHORIZED_LOGIN_NAME, UNAUTHORIZED_PASSWORD)
+        def developer = createDeveloper(UNAUTHORIZED_LOGIN_NAME, UNAUTHORIZED_PASSWORD)
 
         when:
         "Performing enroll"
@@ -203,7 +205,7 @@ class AuthenticationEndpointSpecification extends Specification {
     def "test logout being logged in"() {
         given:
         "Admin developer"
-        def developer = buildDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
+        def developer = createDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD)
 
         when:
         "Performing Login"
@@ -233,13 +235,5 @@ class AuthenticationEndpointSpecification extends Specification {
         "EJBException with an UnauthorizedException cause is thrown"
         def ex = thrown(EJBException)
         ex.cause instanceof UnauthorizedException
-    }
-
-
-    private Developer buildDeveloper(String loginName, String password) {
-        Developer developer = new Developer()
-        developer.setLoginName(loginName)
-        developer.setPassword(password)
-        return developer
     }
 }

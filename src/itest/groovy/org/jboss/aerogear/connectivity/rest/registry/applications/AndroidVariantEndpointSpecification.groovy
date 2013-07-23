@@ -37,7 +37,10 @@ import org.jboss.aerogear.connectivity.service.AndroidVariantService;
 import org.jboss.aerogear.connectivity.users.Developer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.spock.ArquillianSpecification;
+import org.jboss.aerogear.connectivity.common.AndroidVariantUtils;
+import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments;
+import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -45,11 +48,13 @@ import spock.lang.Shared;
 import spock.lang.Specification;
 
 @ArquillianSpecification
+@Mixin([AuthenticationUtils, PushApplicationUtils, AndroidVariantUtils])
 class AndroidVariantEndpointSpecification extends Specification {
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServerWithClasses(AndroidVariantEndpointSpecification.class)
+        Deployments.unifiedPushServerWithClasses(AndroidVariantEndpointSpecification.class, AuthenticationUtils.class,
+            PushApplicationUtils.class, AndroidVariantUtils.class)
     }
 
     @Shared private static String pushAppId
@@ -176,13 +181,13 @@ class AndroidVariantEndpointSpecification extends Specification {
 
         given:
         "A Push Application"
-        def PushApplication pushApp = buildPushApplication(PUSH_APPLICATION_NAME, PUSH_APPLICATION_DESC)
-        def AndroidVariant androidVariant = buildAndroidVariant(ANDROID_VARIANT_GOOGLE_KEY, ANDROID_VARIANT_NAME,
-                ANDROID_VARIANT_DESC);
+        def PushApplication pushApp = createPushApplication(PUSH_APPLICATION_NAME, PUSH_APPLICATION_DESC, null, null, null)
+        def AndroidVariant androidVariant = createAndroidVariant(ANDROID_VARIANT_NAME,
+                ANDROID_VARIANT_DESC, null, null, null, ANDROID_VARIANT_GOOGLE_KEY);
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Registers the push application"
@@ -228,7 +233,7 @@ class AndroidVariantEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Lists all the Android variations for push app id"
@@ -260,7 +265,7 @@ class AndroidVariantEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Searches for a registered Android Variant by id"
@@ -293,12 +298,12 @@ class AndroidVariantEndpointSpecification extends Specification {
 
         given:
         "Updated Android Variant"
-        def AndroidVariant updatedAndroidvariant = buildAndroidVariant(UPDATED_ANDROID_VARIANT_GOOGLE_KEY,
-                UPDATED_ANDROID_VARIANT_NAME, UPDATED_ANDROID_VARIANT_DESC)
+        def AndroidVariant updatedAndroidvariant = createAndroidVariant(UPDATED_ANDROID_VARIANT_NAME, 
+            UPDATED_ANDROID_VARIANT_DESC, null, null, null, UPDATED_ANDROID_VARIANT_GOOGLE_KEY)
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Updates the registered Android Variant"
@@ -346,7 +351,7 @@ class AndroidVariantEndpointSpecification extends Specification {
 
         when:
         "User is logged in"
-        login()
+        adminLogin()
 
         and:
         "Deletes and Android variant"
@@ -379,25 +384,10 @@ class AndroidVariantEndpointSpecification extends Specification {
         findAndroidVariant == null
     }
 
-    private void login() {
+    def adminLogin() {
         // test default login
-        Developer developer = buildDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD);
+        def developer = createDeveloper(AUTHORIZED_LOGIN_NAME, AUTHORIZED_PASSWORD);
         Response response = authenticationEndpoint.login(developer);
-    }
-
-    private PushApplication buildPushApplication(String name, String description) {
-        PushApplication pushApp = new PushApplication();
-        pushApp.setName(name);
-        pushApp.setDescription(description);
-        return pushApp;
-    }
-
-    private AndroidVariant buildAndroidVariant(String googleKey, String name, String description) {
-        AndroidVariant androidVariant = new AndroidVariant();
-        androidVariant.setGoogleKey(googleKey);
-        androidVariant.setName(name);
-        androidVariant.setDescription(description);
-        return androidVariant;
     }
 
     private UriInfo mockUriInfo(String absolutePath) {
@@ -424,12 +414,5 @@ class AndroidVariantEndpointSpecification extends Specification {
             }
         }
         return false;
-    }
-
-    private Developer buildDeveloper(String loginName, String password) {
-        Developer developer = new Developer();
-        developer.setLoginName(loginName);
-        developer.setPassword(password);
-        return developer;
     }
 }
