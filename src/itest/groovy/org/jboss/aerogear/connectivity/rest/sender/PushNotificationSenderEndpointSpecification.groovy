@@ -49,6 +49,12 @@ import spock.lang.Specification
 import com.google.android.gcm.server.Sender
 import com.jayway.awaitility.Awaitility
 import com.jayway.awaitility.Duration
+import com.notnoop.apns.APNS;
+import com.notnoop.apns.ApnsService;
+import com.notnoop.apns.ApnsServiceBuilder;
+import com.notnoop.apns.PayloadBuilder;
+import com.notnoop.apns.internal.ApnsServiceImpl;
+import com.notnoop.exceptions.NetworkIOException;
 
 
 @ArquillianSpecification
@@ -100,6 +106,10 @@ class PushNotificationSenderEndpointSpecification extends Specification {
     private final String SIMPLE_PUSH_DEVICE_TYPE = "Phone"
 
     private final String NOTIFICATION_ALERT_MSG = "Hello AeroGearers"
+    
+    private final String NOTIFICATION_SOUND = "default"
+    
+    private final int NOTIFICATION_BADGE = 7
 
     private final String IOS_VARIANT_NAME = "IOS_Variant__1"
 
@@ -150,6 +160,19 @@ class PushNotificationSenderEndpointSpecification extends Specification {
                 )
         war.addAsLibraries(jar)
 
+        war.delete("/WEB-INF/lib/apns-0.2.3.jar")
+
+        JavaArchive apnsJar = ShrinkWrap.create(JavaArchive.class, "apns-0.2.3.jar")
+                .addClasses(
+                NetworkIOException.class,
+                ApnsService.class,
+                ApnsServiceImpl.class,
+                ApnsServiceBuilder.class,
+                PayloadBuilder.class,
+                APNS.class
+                )
+        war.addAsLibraries(apnsJar)
+
         File[] libs = Maven.resolver().loadPomFromFile("pom.xml").resolve(
                 "org.mockito:mockito-core",
                 "com.jayway.restassured:rest-assured",
@@ -185,7 +208,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         then:
         authCookies != null
     }
-    
+
     @RunAsClient
     def "Register a push application - Bad Case - empty push application"() {
         given: "A Push Application"
@@ -198,7 +221,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         then: "Response code 400 is returned"
         response.statusCode() == Status.BAD_REQUEST.getStatusCode()
     }
-    
+
     @RunAsClient
     def "Register a push application - Bad Case - missing auth cookies"() {
         given: "A Push Application"
@@ -261,7 +284,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "Secret is not empty"
         androidSecret != null
     }
-    
+
     @RunAsClient
     def "Register an Android Variant - Bad Case - missing Google key"() {
         given: "An Android Variant"
@@ -277,7 +300,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "Response status code is 400"
         response != null && response.statusCode() == Status.BAD_REQUEST.getStatusCode()
     }
-    
+
     @RunAsClient
     def "Register an Android Variant - Bad Case - missing auth cookies"() {
         given: "An Android Variant"
@@ -293,7 +316,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "Response status code is 401"
         response != null && response.statusCode() == Status.UNAUTHORIZED.getStatusCode()
     }
-    
+
     @RunAsClient
     def "Register a Simple Push Variant"() {
         given: "A SimplePush Variant"
@@ -318,7 +341,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "Secret is not empty"
         simplePushSecret != null
     }
-    
+
     @RunAsClient
     def "Register a Simple Push Variant - Bad Case - missing auth cookies"() {
         given: "A SimplePush Variant"
@@ -334,7 +357,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "Response status code is 401"
         response != null && response.statusCode() == Status.UNAUTHORIZED.getStatusCode()
     }
-    
+
     @RunAsClient
     def "Register a Simple Push Variant - Bad Case - missing network url"() {
         given: "A SimplePush Variant"
@@ -376,7 +399,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "iOS Secret is not empty"
         iOSPushSecret != null
     }
-    
+
     @RunAsClient
     def "Register an iOS Variant - Bad Case missing auth cookies"() {
         given: "An iOS application form"
@@ -410,24 +433,24 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         response != null && response.statusCode() == Status.OK.getStatusCode()
     }
 
-// TODO: should be bad request
-//    @RunAsClient
-//    def "Register an installation for an iOS device - Bad Case - empty device token"() {
-//
-//        given: "An installation for an iOS device"
-//        InstallationImpl iOSInstallation = createInstallation("", IOS_DEVICE_TYPE,
-//                IOS_DEVICE_OS, IOS_DEVICE_OS_VERSION, IOS_CLIENT_ALIAS, null)
-//
-//        when: "Installation is registered"
-//        def response = registerInstallation(iOSVariantId, iOSPushSecret, iOSInstallation)
-//
-//        then: "Variant id and secret is not empty"
-//        androidVariantId != null && androidSecret != null
-//
-//        and: "Response status code is 200"
-//        response != null && response.statusCode() == Status.BAD_REQUEST.getStatusCode()
-//    }
-    
+    // TODO: should be bad request
+    //    @RunAsClient
+    //    def "Register an installation for an iOS device - Bad Case - empty device token"() {
+    //
+    //        given: "An installation for an iOS device"
+    //        InstallationImpl iOSInstallation = createInstallation("", IOS_DEVICE_TYPE,
+    //                IOS_DEVICE_OS, IOS_DEVICE_OS_VERSION, IOS_CLIENT_ALIAS, null)
+    //
+    //        when: "Installation is registered"
+    //        def response = registerInstallation(iOSVariantId, iOSPushSecret, iOSInstallation)
+    //
+    //        then: "Variant id and secret is not empty"
+    //        androidVariantId != null && androidSecret != null
+    //
+    //        and: "Response status code is 200"
+    //        response != null && response.statusCode() == Status.BAD_REQUEST.getStatusCode()
+    //    }
+
     @RunAsClient
     def "Register an installation for an Android device"() {
 
@@ -514,7 +537,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         then: "Response status code is 401"
         response != null && response.statusCode() == Status.UNAUTHORIZED.getStatusCode()
     }
-    
+
     @RunAsClient
     def "Selective send to aliases"() {
 
@@ -532,7 +555,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
 
         then: "Push application id and master secret are not empty"
         pushApplicationId != null && masterSecret != null
-        
+
         and: "Response status code is 200"
         response != null && response.statusCode() == Status.OK.getStatusCode()
     }
@@ -546,10 +569,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
                         return Sender.gcmRegIdsList != null && Sender.gcmRegIdsList.size() == 2 // The condition that must be fulfilled
                     }
                 }
-        )
-
-        and: "The list contains 2 registration token ids"
-        Sender.gcmRegIdsList.size() == 2
+                )
 
         and: "The list contains the correct token ids"
         Sender.gcmRegIdsList.contains(ANDROID_DEVICE_TOKEN) && Sender.gcmRegIdsList.contains(ANDROID_DEVICE_TOKEN_2)
@@ -568,17 +588,40 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         and: "A message"
         Map<String, Object> messages = new HashMap<String, Object>()
         messages.put("alert", NOTIFICATION_ALERT_MSG)
-        messages.put("sound", "default")
-        messages.put("badge", 7)
+        messages.put("sound", NOTIFICATION_SOUND)
+        messages.put("badge", NOTIFICATION_BADGE)
 
         when: "Selective send to aliases"
         def response = selectiveSend(pushApplicationId, masterSecret, aliases, null, messages, null)
 
         then: "Push application id and master secret are not empty"
         pushApplicationId != null && masterSecret != null
-        
+
         and: "Response status code is 200"
         response != null && response.statusCode() == Status.OK.getStatusCode()
     }
 
+    def "verify that iOS notifications were sent"() {
+
+        expect: "Custom iOS Sender push is called with 1 token id"
+        Awaitility.await().atMost(Duration.FIVE_SECONDS).until(
+                new Callable<Boolean>() {
+                    public Boolean call() throws Exception {
+                        return ApnsServiceImpl.tokensList != null && ApnsServiceImpl.tokensList.size() == 1 // The condition that must be fulfilled
+                    }
+                }
+        )
+        
+        and: "The list contains 1 registration token id"
+        ApnsServiceImpl.tokensList.contains(IOS_DEVICE_TOKEN)
+        
+        and: "The message is the expected one"
+        NOTIFICATION_ALERT_MSG.equals(ApnsServiceImpl.alert)
+        
+        and: "The sound is the expected one"
+        NOTIFICATION_SOUND.equals(ApnsServiceImpl.sound)
+        
+        and: "The badge is the expected one"
+        NOTIFICATION_BADGE == ApnsServiceImpl.badge
+    }
 }
