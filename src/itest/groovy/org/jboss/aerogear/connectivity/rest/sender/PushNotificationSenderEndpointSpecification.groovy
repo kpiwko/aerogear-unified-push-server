@@ -900,6 +900,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         StringBuffer response = new StringBuffer();
         try{
             connection = providerSocket.accept();
+            connection.setSoTimeout(2000);
             input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             
             int result;
@@ -913,7 +914,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
             }
         }
         catch(Exception ex){
-            ex.printStackTrace();
+            //ex.printStackTrace();
         }
         finally{
             try{
