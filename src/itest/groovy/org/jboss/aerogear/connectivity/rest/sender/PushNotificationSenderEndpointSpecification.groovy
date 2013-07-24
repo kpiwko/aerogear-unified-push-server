@@ -902,19 +902,15 @@ class PushNotificationSenderEndpointSpecification extends Specification {
             connection = providerSocket.accept();
             input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             
-            final CountDownLatch countDownLatch = new CountDownLatch(1);
-            
             int result;
             while ((result = input.read()) != -1) {
                 response.append(Character.toChars(result));
                 
                 if (response.toString().contains(NOTIFICATION_ALERT_MSG))
                 {
-                    countDownLatch.countDown();
                     break;
                 }
             }
-            countDownLatch.await(3, TimeUnit.SECONDS);
         }
         catch(Exception ex){
             ex.printStackTrace();
