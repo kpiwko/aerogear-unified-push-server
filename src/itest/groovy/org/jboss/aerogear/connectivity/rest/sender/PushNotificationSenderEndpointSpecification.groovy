@@ -102,8 +102,6 @@ class PushNotificationSenderEndpointSpecification extends Specification {
     private final static String ANDROID_CLIENT_ALIAS = "qa_android_1@aerogear"
 
     private final static String ANDROID_CLIENT_ALIAS_2 = "qa_android_2@mobileteam"
-    
-    private final static String ANDROID_CLIENT_ALIAS_3 = "qa_android_3@mobileteam"
 
     private final static String SIMPLE_PUSH_VARIANT_NAME = "SimplePushVariant__1"
 
@@ -138,12 +136,12 @@ class PushNotificationSenderEndpointSpecification extends Specification {
     private final static String IOS_DEVICE_OS_VERSION = "6"
 
     private final static String IOS_CLIENT_ALIAS = "qa_iOS_1@aerogear"
-    
-    private final static String IOS_CLIENT_ALIAS_2 = "qa_iOS_2@aerogear"
 
     private final static String SIMPLE_PUSH_CATEGORY = "1234"
 
     private final static String SIMPLE_PUSH_CLIENT_ALIAS = "qa_simple_push_1@aerogear"
+    
+    private final static String COMMON_IOS_ANDROID_CLIENT_ALIAS = "qa_ios_android@aerogear"
 
     private final static URL root = new URL("http://localhost:8080/ag-push/")
 
@@ -458,7 +456,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
 
         given: "An installation for an iOS device"
         InstallationImpl iOSInstallation = createInstallation(IOS_DEVICE_TOKEN_2, IOS_DEVICE_TYPE,
-        IOS_DEVICE_OS, IOS_DEVICE_OS_VERSION, IOS_CLIENT_ALIAS_2, null)
+        IOS_DEVICE_OS, IOS_DEVICE_OS_VERSION, COMMON_IOS_ANDROID_CLIENT_ALIAS, null)
 
         when: "Installation is registered"
         def response = registerInstallation(iOSVariantId, iOSPushSecret, iOSInstallation)
@@ -527,7 +525,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
 
         given: "An installation for an Android device"
         InstallationImpl androidInstallation = createInstallation(ANDROID_DEVICE_TOKEN_3, ANDROID_DEVICE_TYPE,
-        ANDROID_DEVICE_OS, ANDROID_DEVICE_OS_VERSION, ANDROID_CLIENT_ALIAS_3, null)
+        ANDROID_DEVICE_OS, ANDROID_DEVICE_OS_VERSION, COMMON_IOS_ANDROID_CLIENT_ALIAS, null)
 
         when: "Installation is registered"
         def response = registerInstallation(androidVariantId, androidSecret, androidInstallation)
@@ -834,6 +832,61 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         
         and: "The message is sent to the correct channel"
         serverInput != null && serverInput.contains("PUT /endpoint/" + SIMPLE_PUSH_DEVICE_TOKEN)
+    }
+    
+    @RunAsClient
+    def "Selective send to all devices of a user by alias - Target multiple devices by alias case"() {
+
+        given: "A List of aliases"
+        List<String> aliases = new ArrayList<String>()
+        aliases.add(COMMON_IOS_ANDROID_CLIENT_ALIAS)
+        Sender.clear()
+        ApnsServiceImpl.clear()
+
+        and: "A message"
+        Map<String, Object> messages = new HashMap<String, Object>()
+        messages.put("alert", NOTIFICATION_ALERT_MSG)
+
+        when: "Selective send to aliases"
+        def response = selectiveSend(pushApplicationId, masterSecret, aliases, null, messages, null, null)
+
+        then: "Push application id and master secret are not empty"
+        pushApplicationId != null && masterSecret != null
+
+        and: "Response status code is 200"
+        response != null && response.statusCode() == Status.OK.getStatusCode()
+    }
+
+    def "Verify that right GCM & APN notifications were sent - Target multiple devices by alias case"() {
+
+        expect: "Custom GCM Sender send is called with 1 token id"
+        Awaitility.await().atMost(Duration.FIVE_SECONDS).until(
+            new Callable<Boolean>() {
+                public Boolean call() throws Exception {
+                    return Sender.gcmRegIdsList != null && Sender.gcmRegIdsList.size() == 1 // The condition that must be fulfilled
+                }
+            }
+        )
+        
+        Awaitility.await().atMost(Duration.FIVE_SECONDS).until(
+            new Callable<Boolean>() {
+                public Boolean call() throws Exception {
+                    return ApnsServiceImpl.tokensList != null && ApnsServiceImpl.tokensList.size() == 1 // The condition that must be fulfilled
+                }
+            }
+        )
+        
+        and: "The GCM list contains the correct token ids"
+        Sender.gcmRegIdsList.contains(ANDROID_DEVICE_TOKEN_3)
+
+        and: "The GCM message sent is the correct one"
+        Sender.gcmMessage != null && NOTIFICATION_ALERT_MSG.equals(Sender.gcmMessage.getData().get("alert"))
+
+        and: "The IOS list contains 1 registration token id"
+        ApnsServiceImpl.tokensList.contains(IOS_DEVICE_TOKEN_2)
+
+        and: "The IOS message is the expected one"
+        NOTIFICATION_ALERT_MSG.equals(ApnsServiceImpl.alert)
     }
     
     private ServerSocket createSocket() {
