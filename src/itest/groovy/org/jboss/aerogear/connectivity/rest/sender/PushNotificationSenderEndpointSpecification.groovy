@@ -673,7 +673,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
                 }
             }
         )
-        
+        serverInput != null && serverInput.contains(NOTIFICATION_ALERT_MSG)
     }
 
     private ServerSocket createSocket() {
