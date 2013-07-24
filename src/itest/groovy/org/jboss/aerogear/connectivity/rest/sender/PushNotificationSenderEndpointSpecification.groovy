@@ -903,7 +903,6 @@ class PushNotificationSenderEndpointSpecification extends Specification {
             input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             
             final CountDownLatch countDownLatch = new CountDownLatch(1);
-            countDownLatch.await(3, TimeUnit.SECONDS);
             
             int result;
             while ((result = input.read()) != -1) {
@@ -915,6 +914,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
                     break;
                 }
             }
+            countDownLatch.await(3, TimeUnit.SECONDS);
         }
         catch(Exception ex){
             ex.printStackTrace();
