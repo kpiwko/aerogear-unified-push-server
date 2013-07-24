@@ -152,23 +152,23 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         war.addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml")
 
         war.addClasses(
-        AuthenticationUtils.class,
-        PushApplicationUtils.class,
-        AndroidVariantUtils.class,
-        SimplePushVariantUtils.class,
-        InstallationUtils.class,
-        iOSVariantUtils.class,
-        PushNotificationSenderUtils.class,
-        PushNotificationSenderEndpointSpecification.class
+            AuthenticationUtils.class,
+            PushApplicationUtils.class,
+            AndroidVariantUtils.class,
+            SimplePushVariantUtils.class,
+            InstallationUtils.class,
+            iOSVariantUtils.class,
+            PushNotificationSenderUtils.class,
+            PushNotificationSenderEndpointSpecification.class
         )
 
         JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "gcm-server-1.0.2.jar")
         .addClasses(
-        com.google.android.gcm.server.Result.class,
-        com.google.android.gcm.server.Message.class,
-        com.google.android.gcm.server.MulticastResult.class,
-        com.google.android.gcm.server.Message.Builder.class,
-        Sender.class
+            com.google.android.gcm.server.Result.class,
+            com.google.android.gcm.server.Message.class,
+            com.google.android.gcm.server.MulticastResult.class,
+            com.google.android.gcm.server.Message.Builder.class,
+            Sender.class
         )
         war.addAsLibraries(jar)
 
@@ -176,19 +176,19 @@ class PushNotificationSenderEndpointSpecification extends Specification {
 
         JavaArchive apnsJar = ShrinkWrap.create(JavaArchive.class, "apns-0.2.3.jar")
         .addClasses(
-        NetworkIOException.class,
-        ApnsService.class,
-        ApnsServiceImpl.class,
-        ApnsServiceBuilder.class,
-        PayloadBuilder.class,
-        APNS.class
+            NetworkIOException.class,
+            ApnsService.class,
+            ApnsServiceImpl.class,
+            ApnsServiceBuilder.class,
+            PayloadBuilder.class,
+            APNS.class
         )
         war.addAsLibraries(apnsJar)
 
         File[] libs = Maven.resolver().loadPomFromFile("pom.xml").resolve(
-        "org.mockito:mockito-core",
-        "com.jayway.restassured:rest-assured",
-        "com.jayway.awaitility:awaitility-groovy").withTransitivity().asFile()
+            "org.mockito:mockito-core",
+            "com.jayway.restassured:rest-assured",
+            "com.jayway.awaitility:awaitility-groovy").withTransitivity().asFile()
         war = war.addAsLibraries(libs)
 
         return war
