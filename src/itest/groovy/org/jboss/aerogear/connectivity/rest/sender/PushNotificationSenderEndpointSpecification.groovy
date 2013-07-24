@@ -71,73 +71,73 @@ import com.notnoop.exceptions.NetworkIOException;
     iOSVariantUtils])
 class PushNotificationSenderEndpointSpecification extends Specification {
 
-    private final String ANDROID_VARIANT_GOOGLE_KEY = "IDDASDASDSAQ__1"
+    private final static String ANDROID_VARIANT_GOOGLE_KEY = "IDDASDASDSAQ__1"
 
-    private final String ANDROID_VARIANT_NAME = "AndroidVariant__1"
+    private final static String ANDROID_VARIANT_NAME = "AndroidVariant__1"
 
-    private final String ANDROID_VARIANT_DESC = "awesome variant__1"
+    private final static String ANDROID_VARIANT_DESC = "awesome variant__1"
 
-    private final String AUTHORIZED_LOGIN_NAME = "admin"
+    private final static String AUTHORIZED_LOGIN_NAME = "admin"
 
-    private final String AUTHORIZED_PASSWORD = "123"
+    private final static String AUTHORIZED_PASSWORD = "123"
 
-    private final String PUSH_APPLICATION_NAME = "TestPushApplication__1"
+    private final static String PUSH_APPLICATION_NAME = "TestPushApplication__1"
 
-    private final String PUSH_APPLICATION_DESC = "awesome app__1"
+    private final static String PUSH_APPLICATION_DESC = "awesome app__1"
 
-    private final String ANDROID_DEVICE_TOKEN = "gsmToken__1"
+    private final static String ANDROID_DEVICE_TOKEN = "gsmToken__1"
 
-    private final String ANDROID_DEVICE_TOKEN_2 = "gsmToken__2"
+    private final static String ANDROID_DEVICE_TOKEN_2 = "gsmToken__2"
 
-    private final String ANDROID_DEVICE_OS = "ANDROID"
+    private final static String ANDROID_DEVICE_OS = "ANDROID"
 
-    private final String ANDROID_DEVICE_TYPE = "AndroidTablet"
+    private final static String ANDROID_DEVICE_TYPE = "AndroidTablet"
 
-    private final String ANDROID_DEVICE_TYPE_2 = "AndroidPhone"
+    private final static String ANDROID_DEVICE_TYPE_2 = "AndroidPhone"
 
-    private final String ANDROID_DEVICE_OS_VERSION = "4.2.2"
+    private final static String ANDROID_DEVICE_OS_VERSION = "4.2.2"
 
-    private final String ANDROID_CLIENT_ALIAS = "qa_1@aerogear"
+    private final static String ANDROID_CLIENT_ALIAS = "qa_1@aerogear"
 
-    private final String ANDROID_CLIENT_ALIAS_2 = "qa_2@mobileteam"
+    private final static String ANDROID_CLIENT_ALIAS_2 = "qa_2@mobileteam"
 
-    private final String SIMPLE_PUSH_VARIANT_NAME = "SimplePushVariant__1"
+    private final static String SIMPLE_PUSH_VARIANT_NAME = "SimplePushVariant__1"
 
-    private final String SIMPLE_PUSH_VARIANT_DESC = "awesome variant__1"
+    private final static String SIMPLE_PUSH_VARIANT_DESC = "awesome variant__1"
 
-    private final String SIMPLE_PUSH_VARIANT_NETWORK_URL = "http://localhost:8081/endpoint/"
+    private final static String SIMPLE_PUSH_VARIANT_NETWORK_URL = "http://localhost:8081/endpoint/"
 
-    private final String SIMPLE_PUSH_DEVICE_TOKEN = "simplePushToken__1"
+    private final static String SIMPLE_PUSH_DEVICE_TOKEN = "simplePushToken__1"
 
-    private final String SIMPLE_PUSH_DEVICE_TOKEN_2 = "simplePushToken__2"
+    private final static String SIMPLE_PUSH_DEVICE_TOKEN_2 = "simplePushToken__2"
 
-    private final String SIMPLE_PUSH_DEVICE_TYPE = "web"
+    private final static String SIMPLE_PUSH_DEVICE_TYPE = "web"
 
-    private final String NOTIFICATION_ALERT_MSG = "Hello AeroGearers"
+    private final static String NOTIFICATION_ALERT_MSG = "Hello AeroGearers"
 
-    private final String NOTIFICATION_SOUND = "default"
+    private final static String NOTIFICATION_SOUND = "default"
 
-    private final int NOTIFICATION_BADGE = 7
+    private final static int NOTIFICATION_BADGE = 7
 
-    private final String IOS_VARIANT_NAME = "IOS_Variant__1"
+    private final static String IOS_VARIANT_NAME = "IOS_Variant__1"
 
-    private final String IOS_VARIANT_DESC = "awesome variant__1"
+    private final static String IOS_VARIANT_DESC = "awesome variant__1"
 
-    private final String IOS_DEVICE_TOKEN = "iOSToken__1"
+    private final static String IOS_DEVICE_TOKEN = "iOSToken__1"
 
-    private final String IOS_DEVICE_OS = "IOS"
+    private final static String IOS_DEVICE_OS = "IOS"
 
-    private final String IOS_DEVICE_TYPE = "IOSTablet"
+    private final static String IOS_DEVICE_TYPE = "IOSTablet"
 
-    private final String IOS_DEVICE_OS_VERSION = "6"
+    private final static String IOS_DEVICE_OS_VERSION = "6"
 
-    private final String IOS_CLIENT_ALIAS = "qa_iOS_1@aerogear"
+    private final static String IOS_CLIENT_ALIAS = "qa_iOS_1@aerogear"
 
-    private final String SIMPLE_PUSH_CATEGORY = "1234"
+    private final static String SIMPLE_PUSH_CATEGORY = "1234"
 
-    private final String SIMPLE_PUSH_CLIENT_ALIAS = "qa_simple_push_1@aerogear"
+    private final static String SIMPLE_PUSH_CLIENT_ALIAS = "qa_simple_push_1@aerogear"
 
-    def @Shared static URL root = new URL("http://localhost:8080/ag-push/")
+    private final static URL root = new URL("http://localhost:8080/ag-push/")
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
@@ -648,7 +648,7 @@ class PushNotificationSenderEndpointSpecification extends Specification {
         List<String> deviceTypes = new ArrayList<String>()
         deviceTypes.add(SIMPLE_PUSH_DEVICE_TYPE)
 
-        and: "A Map of categories"
+        and: "A Map of categories / messages"
         Map<String, String> simplePush = new HashMap<String, String>()
         simplePush.put(SIMPLE_PUSH_CATEGORY, NOTIFICATION_ALERT_MSG)
 
@@ -673,7 +673,12 @@ class PushNotificationSenderEndpointSpecification extends Specification {
                 }
             }
         )
+        
+        and: "The message should have been sent"
         serverInput != null && serverInput.contains(NOTIFICATION_ALERT_MSG)
+        
+        and: "The message is sent to the correct channel"
+        serverInput != null && serverInput.contains("PUT /endpoint/" + SIMPLE_PUSH_DEVICE_TOKEN_2)
     }
 
     private ServerSocket createSocket() {

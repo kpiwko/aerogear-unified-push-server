@@ -17,6 +17,7 @@
 package com.notnoop.apns;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 public interface ApnsService {
@@ -25,8 +26,7 @@ public interface ApnsService {
     public void stop();
     public void testConnection();
     
-    @SuppressWarnings("rawtypes")
-    public Map getInactiveDevices();
+    public Map<String, Date> getInactiveDevices();
 
     @SuppressWarnings("rawtypes")
     public Collection push(Collection<String> tokens, String apnsMessage);

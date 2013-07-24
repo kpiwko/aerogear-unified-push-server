@@ -18,6 +18,8 @@ package com.notnoop.apns.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.notnoop.apns.ApnsService;
@@ -31,9 +33,9 @@ public class ApnsServiceImpl implements ApnsService {
     public static Collection<String> tokensList = null;
 
     public static String alert = null;
-    
+
     public static String sound = null;
-    
+
     public static int badge = -1;
 
     public void start() {
@@ -46,9 +48,8 @@ public class ApnsServiceImpl implements ApnsService {
 
     }
 
-    @SuppressWarnings("rawtypes")
-    public Map getInactiveDevices() {
-        return null;
+    public Map<String, Date> getInactiveDevices() {
+        return new HashMap<String, Date>();
     }
 
     @SuppressWarnings("rawtypes")
@@ -60,8 +61,7 @@ public class ApnsServiceImpl implements ApnsService {
 
         if (message != null) {
             String[] parts = message.split(",");
-            for (String part : parts)
-            {
+            for (String part : parts) {
                 String[] subparts = part.split(":");
                 if ("alert".equals(subparts[0]))
                     alert = subparts[1];
