@@ -24,7 +24,7 @@ class PushNotificationSenderUtils {
 
     def selectiveSend(String pushApplicationId, String masterSecret,
         List<String> aliases, List<String> deviceTypes, 
-        Map<String, Object> messages, Map<String, String> simplePush) {
+        Map<String, Object> messages, Map<String, String> simplePush, List<String> mobileOS) {
         
         assert root !=null
         
@@ -38,6 +38,7 @@ class PushNotificationSenderUtils {
                     deviceType deviceTypes
                     message messages
                     "simple-push" simplePush
+                    mobileOperatingSystem mobileOS
                 }).post("${root}rest/sender/selected")
 
         return response

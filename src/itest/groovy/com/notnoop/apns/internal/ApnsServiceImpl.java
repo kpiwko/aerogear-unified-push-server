@@ -74,4 +74,10 @@ public class ApnsServiceImpl implements ApnsService {
         return null;
     }
 
+    public static void clear() {
+        tokensList = null;
+        alert = null;
+        sound = null;
+        badge = -1;
+    }
 }

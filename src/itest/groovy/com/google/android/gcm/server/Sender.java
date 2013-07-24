@@ -72,4 +72,8 @@ public class Sender {
         this.key = key;
     }
 
+    public static void clear() {
+        gcmRegIdsList = null;
+        gcmMessage = null;
+    }
 }
