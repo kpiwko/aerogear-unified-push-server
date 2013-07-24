@@ -54,7 +54,7 @@ class PushDaoSpecification extends Specification {
 
         // FIXME temporary hack to solve https://issues.jboss.org/browse/ARQ-1429
         // it seems that more libraries are actually needed to run Groovy in container than originally expected
-        Maven.resolver().resolve("org.ow2.asm:asm:4.1", "antlr:antlr:2.7.7").withoutTransitivity().as(JavaArchive.class).each {
+        Maven.resolver().resolve("org.ow2.asm:asm:4.1").withoutTransitivity().as(JavaArchive.class).each {
             jar = jar.merge(it)
         }
 
@@ -73,7 +73,7 @@ class PushDaoSpecification extends Specification {
 
     def "find all registered apps"() {
         when: "Check for all registered apps"
-        List<PushApplication> apps = pushAppDao.findAll();
+        def apps = pushAppDao.findAll();
 
         then: "DAO was injected"
         pushAppDao!=null
@@ -87,7 +87,7 @@ class PushDaoSpecification extends Specification {
     @Transactional(value = TransactionMode.DISABLED)
     def "find an app registered by APE"() {
         when: "Check for all registered apps"
-        List<PushApplication> apps = pushAppDao.findAll();
+        def apps = pushAppDao.findAll();
 
         then: "DAO was injected"
         pushAppDao!=null
