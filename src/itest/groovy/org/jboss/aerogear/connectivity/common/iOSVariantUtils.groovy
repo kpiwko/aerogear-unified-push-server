@@ -16,11 +16,7 @@
  */
 package org.jboss.aerogear.connectivity.common
 
-import static org.mockito.Mockito.*
 import groovy.json.JsonBuilder
-
-import java.io.File;
-import java.security.cert.X509Certificate
 
 import org.jboss.aerogear.connectivity.rest.util.iOSApplicationUploadForm
 
@@ -51,22 +47,14 @@ class iOSVariantUtils {
                 .contentType("multipart/form-data")
                 .header("Accept", "application/json")
                 .cookies(cookies)
-                .multiPart("certificate", "/home/qa/test.p12")
-                .formParam("production", form.getProduction().toString())
-                .formParam("passphrase", form.getPassphrase())
-                .formParam("name", form.getName())
-                .formParam("description", form.getDescription())
+                .multiPart("certificate", new File("src/itest/resources/certs/qaAerogear.p12"))
+                .multiPart("production", form.getProduction().toString())
+                .multiPart("passphrase", form.getPassphrase())
+                .multiPart("name", form.getName())
+                .multiPart("description", form.getDescription())
                 .post("${root}rest/applications/${pushAppId}/iOS")
 
         return response
     }
 
-    def mockX509Certificate() {
-        X509Certificate cert =  mock (X509Certificate.class)
-        ByteArrayOutputStream bos = new ByteArrayOutputStream()
-        ObjectOutput out = new ObjectOutputStream(bos)
-        out.writeObject(cert)
-        byte[] data = bos.toByteArray()
-        return data
-    }
 }

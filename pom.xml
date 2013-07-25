@@ -15,8 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.aerogear.connectivity</groupId>
     <artifactId>pushee</artifactId>
@@ -219,7 +218,7 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
             <version>1.8.1</version>
-                <exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.jackson</groupId>
                     <artifactId>jackson-mapper-asl</artifactId>
@@ -267,7 +266,33 @@
             <artifactId>arquillian-persistence-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Byteman and Awailitity is used to test 3rd party Senders -->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-extension-byteman</artifactId>
+            <version>1.0.0.Alpha2</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.byteman</groupId>
+            <artifactId>byteman-submit</artifactId>
+            <version>2.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.awaitility</groupId>
+            <artifactId>awaitility-groovy</artifactId>
+            <version>1.3.5</version>
+            <scope>test</scope>
+        </dependency>        
+        
         <!-- APE requires slf4j, https://issues.jboss.org/browse/ARQ-1401 -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -279,12 +304,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.awaitility</groupId>
-            <artifactId>awaitility-groovy</artifactId>
-            <version>1.3.5</version>
             <scope>test</scope>
         </dependency>
 
@@ -396,6 +415,7 @@
                             <resources>
                                 <resource>
                                     <directory>src/itest/resources</directory>
+                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>
@@ -410,6 +430,10 @@
                     <includes>
                         <include>**/*Specification*</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <!-- for Byteman we need to propagate tools.jar location -->
+                        <tools.jar>${tools.jar}</tools.jar>
+                    </systemPropertyVariables>
                     <!-- <skip>true</skip> -->
                 </configuration>
                 <executions>
@@ -469,7 +493,10 @@
         <maven.compiler.argument.source>${maven.compiler.source}</maven.compiler.argument.source>
         <aerogear.security.version>1.1.1</aerogear.security.version>
         <aerogear.security.picketlink.version>1.1.1</aerogear.security.picketlink.version>
-
+        
+        <!-- Test Byteman Jars -->
+        <byteman.jar>${user.home}/.m2/repository/org/jboss/byteman/byteman/2.1.3/byteman-2.1.3.jar</byteman.jar>
+        <byteman.submit.jar>${user.home}/.m2/repository/org/jboss/byteman/byteman-submit/2.1.3/byteman-submit-2.1.3.jar</byteman.submit.jar>
     </properties>
 
     <profiles>
@@ -554,7 +581,7 @@
             <build>
                 <!-- JBoss EAP 6.0.1 is not hosted in any Maven repository, you have to unpack it manually -->
             </build>
-        </profile>
+        </profile>        
     </profiles>
 
 </project>
