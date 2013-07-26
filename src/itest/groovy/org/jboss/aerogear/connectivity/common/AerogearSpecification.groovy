@@ -20,9 +20,11 @@ import groovy.json.JsonBuilder
 import groovy.lang.Closure;
 
 import org.jboss.arquillian.container.test.api.Deployment
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.arquillian.test.api.ArquillianResource
 import org.jboss.osgi.framework.internal.SystemBundleContext;
 import org.jboss.shrinkwrap.api.spec.WebArchive
+import org.junit.runner.RunWith;
 
 import spock.lang.Shared
 import spock.lang.Specification
@@ -37,6 +39,7 @@ import com.jayway.restassured.response.Cookies;
 
 
 
+@RunWith(ArquillianSputnik.class)
 class AerogearSpecification extends Specification {
 
     @Deployment(testable=false)
