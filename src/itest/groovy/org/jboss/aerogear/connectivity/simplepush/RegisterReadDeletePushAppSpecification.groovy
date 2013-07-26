@@ -23,6 +23,7 @@ import com.jayway.restassured.filter.log.ResponseLoggingFilter
 import groovy.json.JsonBuilder
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.arquillian.test.api.ArquillianResource
 import org.jboss.aerogear.connectivity.common.AdminLogin
 import org.jboss.aerogear.connectivity.common.Deployments
@@ -31,6 +32,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import javax.inject.Inject
 import org.jboss.aerogear.connectivity.jpa.dao.PushApplicationDao
+import org.junit.runner.RunWith;
+
 import javax.enterprise.inject.Produces
 import javax.persistence.PersistenceContext
 import javax.persistence.PersistenceContextType
@@ -39,6 +42,7 @@ import javax.persistence.EntityManager
 import groovy.json.JsonSlurper
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin(AdminLogin)
 class RegisterReadDeletePushAppSpecification extends Specification {
 
@@ -68,9 +72,9 @@ class RegisterReadDeletePushAppSpecification extends Specification {
                 .header("Accept", "application/json")
                 .cookies(authCookies)
                 .body( json {
-            name "RegisterReadDeletePushAppSpecification"
-            description "RegisterReadDeletePushAppSpecification desc"
-        })
+                    name "RegisterReadDeletePushAppSpecification"
+                    description "RegisterReadDeletePushAppSpecification desc"
+                })
 
         when: "Application is registered"
         def response = RestAssured.given().spec(request).post("${root}rest/applications")
@@ -146,9 +150,7 @@ class RegisterReadDeletePushAppSpecification extends Specification {
                 .contentType("application/json")
                 .header("Accept", "application/json")
                 .cookies(authCookies)
-                .body( json {
-                    'pushAppId' pushAppId
-                     })
+                .body( json { 'pushAppId' pushAppId })
 
         when: "Application is deleted"
         def response = RestAssured.given().spec(request).delete("${root}rest/applications/${pushAppId}")

@@ -21,10 +21,13 @@ import com.jayway.restassured.RestAssured
 import groovy.json.JsonBuilder
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.arquillian.test.api.ArquillianResource
 import org.jboss.aerogear.connectivity.common.AdminLogin
 import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.shrinkwrap.api.spec.WebArchive
+import org.junit.runner.RunWith;
+
 import spock.lang.Shared
 import spock.lang.Specification
 import com.jayway.restassured.filter.log.RequestLoggingFilter
@@ -32,6 +35,7 @@ import com.jayway.restassured.filter.log.ResponseLoggingFilter
 import org.apache.http.entity.ContentType
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin(AdminLogin)
 class RegisterPushAppWithoutLoginSpecification extends Specification {
 
@@ -69,5 +73,4 @@ class RegisterPushAppWithoutLoginSpecification extends Specification {
         and: "Error message"
         responseString == "{message : User authentication failed }"
     }
-
 }

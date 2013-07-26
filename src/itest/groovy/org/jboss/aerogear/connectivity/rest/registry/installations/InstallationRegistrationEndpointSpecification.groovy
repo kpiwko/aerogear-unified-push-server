@@ -37,25 +37,28 @@ import org.jboss.aerogear.connectivity.service.ClientInstallationService;
 import org.jboss.aerogear.connectivity.users.Developer
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.aerogear.connectivity.common.AndroidVariantUtils;
 import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.aerogear.connectivity.common.InstallationUtils;
 import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
 import org.jboss.shrinkwrap.api.spec.WebArchive
+import org.junit.runner.RunWith;
 import org.picketlink.common.util.Base64
 
 import spock.lang.Shared
 import spock.lang.Specification
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin([AuthenticationUtils, PushApplicationUtils, AndroidVariantUtils, InstallationUtils])
 class InstallationRegistrationEndpointSpecification extends Specification {
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
-        Deployments.unifiedPushServerWithClasses(InstallationRegistrationEndpointSpecification.class, 
-            AuthenticationUtils.class, PushApplicationUtils.class, AndroidVariantUtils.class, InstallationUtils.class)
+        Deployments.unifiedPushServerWithClasses(InstallationRegistrationEndpointSpecification.class,
+                AuthenticationUtils.class, PushApplicationUtils.class, AndroidVariantUtils.class, InstallationUtils.class)
     }
 
     @Shared private static String pushAppId
@@ -239,5 +242,4 @@ class InstallationRegistrationEndpointSpecification extends Specification {
         }
         return uriInfo;
     }
-
 }

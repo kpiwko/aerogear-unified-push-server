@@ -28,6 +28,7 @@ import org.jboss.aerogear.connectivity.service.PushApplicationService;
 import org.jboss.aerogear.connectivity.users.Developer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.spock.ArquillianSpecification;
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments;
 import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
@@ -36,11 +37,13 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
+import org.junit.runner.RunWith;
 
 import spock.lang.Shared;
 import spock.lang.Specification;
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin([PushApplicationUtils, AuthenticationUtils])
 class PushApplicationEndpointSpecification extends Specification {
 
@@ -72,7 +75,7 @@ class PushApplicationEndpointSpecification extends Specification {
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
         Deployments.unifiedPushServerWithClasses(PushApplicationEndpointSpecification.class, PushApplicationUtils.class,
-            AuthenticationUtils.class)
+                AuthenticationUtils.class)
     }
 
     def "test unauthorized registration"() {
@@ -313,7 +316,7 @@ class PushApplicationEndpointSpecification extends Specification {
 
         "Searches for a push application by id"
         def findByIdResponse = pushApplicationEndpoint.findById(pushAppId)
-        
+
         then:
         "Injections have been performed"
         pushApplicationEndpoint!=null
@@ -351,5 +354,4 @@ class PushApplicationEndpointSpecification extends Specification {
         }
         return false
     }
-
 }

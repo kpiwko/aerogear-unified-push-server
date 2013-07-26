@@ -22,8 +22,10 @@ import org.jboss.aerogear.connectivity.common.AdminLogin
 import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.arquillian.test.api.ArquillianResource
 import org.jboss.shrinkwrap.api.spec.WebArchive
+import org.junit.runner.RunWith;
 
 import spock.lang.Shared
 import spock.lang.Specification
@@ -32,6 +34,7 @@ import com.jayway.restassured.RestAssured
 
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin(AdminLogin)
 class RegisterPushAppSpecification extends Specification {
 

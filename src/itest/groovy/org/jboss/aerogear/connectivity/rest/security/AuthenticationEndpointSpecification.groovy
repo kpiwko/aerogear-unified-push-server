@@ -29,6 +29,7 @@ import org.jboss.aerogear.security.auth.AuthenticationManager
 import org.jboss.aerogear.security.authz.IdentityManagement
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments
 import org.jboss.resteasy.spi.UnauthorizedException;
@@ -39,12 +40,14 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
+import org.junit.runner.RunWith;
 import org.picketlink.authentication.UserAlreadyLoggedInException;
 import org.picketlink.idm.model.SimpleUser;
 
 import spock.lang.Specification
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin(AuthenticationUtils)
 class AuthenticationEndpointSpecification extends Specification {
 

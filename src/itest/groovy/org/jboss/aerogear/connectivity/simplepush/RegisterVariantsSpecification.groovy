@@ -30,10 +30,13 @@ import spock.lang.Specification
 import spock.lang.Shared
 
 import org.jboss.arquillian.spock.ArquillianSpecification
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.aerogear.connectivity.common.AdminLogin;
 import org.jboss.aerogear.connectivity.common.Deployments;
+import org.junit.runner.RunWith;
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin(AdminLogin)
 class RegisterVariantsSpecification extends Specification {
 

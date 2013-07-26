@@ -37,24 +37,27 @@ import org.jboss.aerogear.connectivity.service.AndroidVariantService;
 import org.jboss.aerogear.connectivity.users.Developer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.spock.ArquillianSpecification;
+import org.jboss.arquillian.spock.ArquillianSputnik;
 import org.jboss.aerogear.connectivity.common.AndroidVariantUtils;
 import org.jboss.aerogear.connectivity.common.AuthenticationUtils;
 import org.jboss.aerogear.connectivity.common.Deployments;
 import org.jboss.aerogear.connectivity.common.PushApplicationUtils;
 import org.jboss.resteasy.spi.UnauthorizedException;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.runner.RunWith;
 
 import spock.lang.Shared;
 import spock.lang.Specification;
 
 @ArquillianSpecification
+@RunWith(ArquillianSputnik.class)
 @Mixin([AuthenticationUtils, PushApplicationUtils, AndroidVariantUtils])
 class AndroidVariantEndpointSpecification extends Specification {
 
     @Deployment(testable=true)
     def static WebArchive "create deployment"() {
         Deployments.unifiedPushServerWithClasses(AndroidVariantEndpointSpecification.class, AuthenticationUtils.class,
-            PushApplicationUtils.class, AndroidVariantUtils.class)
+                PushApplicationUtils.class, AndroidVariantUtils.class)
     }
 
     @Shared private static String pushAppId
@@ -298,8 +301,8 @@ class AndroidVariantEndpointSpecification extends Specification {
 
         given:
         "Updated Android Variant"
-        def AndroidVariant updatedAndroidvariant = createAndroidVariant(UPDATED_ANDROID_VARIANT_NAME, 
-            UPDATED_ANDROID_VARIANT_DESC, null, null, null, UPDATED_ANDROID_VARIANT_GOOGLE_KEY)
+        def AndroidVariant updatedAndroidvariant = createAndroidVariant(UPDATED_ANDROID_VARIANT_NAME,
+                UPDATED_ANDROID_VARIANT_DESC, null, null, null, UPDATED_ANDROID_VARIANT_GOOGLE_KEY)
 
         when:
         "User is logged in"
