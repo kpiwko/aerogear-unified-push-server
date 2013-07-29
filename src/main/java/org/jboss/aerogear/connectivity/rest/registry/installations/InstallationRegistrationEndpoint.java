@@ -16,7 +16,6 @@
  */
 package org.jboss.aerogear.connectivity.rest.registry.installations;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -77,37 +76,36 @@ public class InstallationRegistrationEndpoint {
         // find the matching variation:
         final Variant variant = loadVariantWhenAuthorized(request);
         if (variant == null) {
-            return Response.status(Status.UNAUTHORIZED)
+            return appendAllowOriginHeader(
+                    Response.status(Status.UNAUTHORIZED)
                     .header("WWW-Authenticate", "Basic realm=\"AeroGear UnifiedPush Server\"")
-                    .entity("Unauthorized Request")
-                    .build();
+                    .entity("Unauthorized Request"),
+                    request);
         }
 
         // Poor validation: We require the Token!
         if (entity.getDeviceToken() == null) {
-            return Response.status(Status.BAD_REQUEST).build();
+            return appendAllowOriginHeader(Response.status(Status.BAD_REQUEST), request);
         }
 
         // look up all installations (with same token) for the given variant:
-        List<InstallationImpl> installations = 
-                clientInstallationService.findInstallationsForVariantByDeviceToken(variant.getVariantID(), entity.getDeviceToken()); 
+        InstallationImpl installation = 
+                clientInstallationService.findInstallationForVariantByDeviceToken(variant.getVariantID(), entity.getDeviceToken()); 
 
-        if (installations.isEmpty()) {
+        // new device/client ? 
+        if (installation == null) {
+            logger.fine("Performing client registration for: " + entity.getDeviceToken());
             // store the installation:
-            entity = clientInstallationService
-                    .addInstallation(entity);
+            entity = clientInstallationService.addInstallation(entity);
             // add installation to the matching variant
             genericVariantService.addInstallation(variant, entity);
         } else {
-            logger.info("Updating received metadata for Installation");
-
-            // should be impossible
-            if (installations.size() > 1) {
-                logger.severe("Too many registration for one installation");
+            // We only update the metadata, if the device is enabled: 
+            if (installation.isEnabled()) {
+                logger.info("Updating received metadata for Installation");
+                // update the entity:
+                entity = clientInstallationService.updateInstallation(installation, entity);
             }
-
-            // update the entity:
-            entity = clientInstallationService.updateInstallation(installations.get(0), entity);
         }
 
         return appendAllowOriginHeader(Response.ok(entity), request);
@@ -123,22 +121,23 @@ public class InstallationRegistrationEndpoint {
         // find the matching variation:
         final Variant variant = loadVariantWhenAuthorized(request);
         if (variant == null) {
-            return Response.status(Status.UNAUTHORIZED)
+            return appendAllowOriginHeader(
+                    Response.status(Status.UNAUTHORIZED)
                     .header("WWW-Authenticate", "Basic realm=\"AeroGear UnifiedPush Server\"")
-                    .entity("Unauthorized Request")
-                    .build();
+                    .entity("Unauthorized Request"),
+                    request);
         }
 
         // look up all installations (with same token) for the given variant:
-        List<InstallationImpl> installations = 
-                clientInstallationService.findInstallationsForVariantByDeviceToken(variant.getVariantID(), token);
+        InstallationImpl installation = 
+                clientInstallationService.findInstallationForVariantByDeviceToken(variant.getVariantID(), token);
 
-        if (installations.isEmpty()) {
+        if (installation == null) {
             return appendAllowOriginHeader(Response.status(Status.NOT_FOUND), request);
         } else {
             logger.info("Deleting metadata Installation");
             // remove
-            clientInstallationService.removeInstallations(installations);
+            clientInstallationService.removeInstallation(installation);
         }
 
         return appendAllowOriginHeader(Response.noContent(), request);

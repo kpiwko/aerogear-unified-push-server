@@ -14,29 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.connectivity.common
+package org.jboss.aerogear.connectivity.common
 
 import groovy.json.JsonBuilder
 
+import org.jboss.aerogear.connectivity.users.Developer
+
 import com.jayway.restassured.RestAssured
 
-// FIXME this should be done via inheritance, see https://issues.jboss.org/browse/ARQ-1427
-class AdminLogin {
+class AuthenticationUtils {
 
-    def login() {
+    def login(String loginNameStr, String passwordStr) {
+
         assert root !=null
 
-        def json = new JsonBuilder()
+        JsonBuilder json = new JsonBuilder()
         def response = RestAssured.given()
                 .contentType("application/json")
                 .header("Accept", "application/json")
                 .body( json {
-                    loginName "admin"
-                    password "123"
-                })
-                .expect().statusCode(200)
-                .when().post("${root}rest/auth/login")
+                    loginName loginNameStr
+                    password passwordStr
+                }).post("${root}rest/auth/login")
 
-        response.getDetailedCookies()
+        return response
+    }
+
+    def createDeveloper(String loginName, String password) {
+        def developer = new Developer()
+        developer.setLoginName(loginName)
+        developer.setPassword(password)
+        return developer
     }
 }

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * 	http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,8 @@ import groovy.json.JsonOutput;
 import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.spock.ArquillianSpecification;
 import org.jboss.arquillian.test.api.ArquillianResource
-import org.jboss.connectivity.common.AdminLogin;
-import org.jboss.connectivity.common.Deployments;
+import org.jboss.aerogear.connectivity.common.AdminLogin;
+import org.jboss.aerogear.connectivity.common.Deployments;
 import org.jboss.modules.AssertionSetting;
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.spec.WebArchive

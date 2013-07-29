@@ -18,6 +18,10 @@ package org.jboss.aerogear.connectivity.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+ 
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
 
 import javax.inject.Inject;
 
@@ -25,12 +29,22 @@ import org.jboss.aerogear.connectivity.jpa.dao.InstallationDao;
 import org.jboss.aerogear.connectivity.model.InstallationImpl;
 import org.jboss.aerogear.connectivity.service.ClientInstallationService;
 
+/**
+ * (Default) implementation of the {@code ClientInstallationService} interface.
+ * Delegates work to an injected DAO object.
+ */
+@Stateless
 public class ClientInstallationServiceImpl implements ClientInstallationService {
 
     // the SimplePush BROADCAST category name:
     private static final String BROADCAST_CHANNEL = "broadcast";
+
     // The allowed SimplePush "device types
-    private static final List<String> SIMPLE_PUSH_DEVICE_TYPES = Arrays.asList("web");
+    // TODO: right now there is no 'auto' registration for SP clients that
+    // store 'web' as their device type metadata. That is the reason for null.
+    // Once that happens the null goes away
+    private static final List<String> SIMPLE_PUSH_DEVICE_TYPES = null;
+    //private static final List<String> SIMPLE_PUSH_DEVICE_TYPES = Arrays.asList("web");
 
     @Inject
     private InstallationDao dao;
@@ -65,6 +79,7 @@ public class ClientInstallationServiceImpl implements ClientInstallationService 
         installationToUpdate.setMobileOperatingSystem(postedInstallation
                 .getMobileOperatingSystem());
         installationToUpdate.setOsVersion(postedInstallation.getOsVersion());
+        installationToUpdate.setEnabled(postedInstallation.isEnabled());
 
         // update it:
         return updateInstallation(installationToUpdate);
@@ -77,11 +92,20 @@ public class ClientInstallationServiceImpl implements ClientInstallationService 
     @Override
     public void removeInstallation(InstallationImpl installation) {
         dao.delete(installation);
-	}
+    }
 
     @Override
-	public List<InstallationImpl> findInstallationsForVariantByDeviceToken(String variantID, String deviceToken) {
-        return dao.findInstallationsForVariantByDeviceToken(variantID, deviceToken);
+    @Asynchronous
+    public void removeInstallationsForVariantByDeviceTokens(String variantID, Set<String> deviceTokens) {
+        // collect inactive installations for the given variant:
+        List<InstallationImpl> inactiveInstallations = dao.findInstallationsForVariantByDeviceTokens(variantID, deviceTokens);
+        // get rid of them
+        this.removeInstallations(inactiveInstallations);
+    }
+
+    @Override
+    public InstallationImpl findInstallationForVariantByDeviceToken(String variantID, String deviceToken) {
+        return dao.findInstallationForVariantByDeviceToken(variantID, deviceToken);
     }
 
     // =====================================================================
