@@ -18,7 +18,6 @@ package org.jboss.aerogear.unifiedpush.rest.registry.applications;
 
 import org.jboss.aerogear.unifiedpush.model.PushApplication;
 import org.jboss.aerogear.unifiedpush.model.SimplePushVariant;
-import org.jboss.aerogear.security.authz.Secure;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -40,19 +39,19 @@ import javax.ws.rs.core.UriInfo;
 @Stateless
 @TransactionAttribute
 @Path("/applications/{pushAppID}/simplePush")
-@Secure( { "developer", "admin" })
 public class SimplePushVariantEndpoint extends AbstractVariantEndpoint {
 
     // new SimplePush
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response registerSimplePushVariant(
             SimplePushVariant simplePushVariant,
             @PathParam("pushAppID") String pushApplicationID,
             @Context UriInfo uriInfo) {
 
         // find the root push app
-        PushApplication pushApp = pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, loginName.get());
+        PushApplication pushApp = pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName());
 
         if (pushApp == null) {
             return Response.status(Status.NOT_FOUND).entity("Could not find requested PushApplication").build();
@@ -70,7 +69,7 @@ public class SimplePushVariantEndpoint extends AbstractVariantEndpoint {
         }
 
         // store the "developer:
-        simplePushVariant.setDeveloper(loginName.get());
+        simplePushVariant.setDeveloper(sec.getUserPrincipal().getName());
 
         // store the SimplePush variant:
         simplePushVariant = (SimplePushVariant) variantService.addVariant(simplePushVariant);
@@ -85,19 +84,20 @@ public class SimplePushVariantEndpoint extends AbstractVariantEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response listAllSimplePushVariationsForPushApp(@PathParam("pushAppID") String pushApplicationID) {
 
-        return Response.ok(pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, loginName.get()).getSimplePushVariants()).build();
+        return Response.ok(pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName()).getSimplePushVariants()).build();
     }
 
     // UPDATE
     @PUT
     @Path("/{simplePushID}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response updateSimplePushVariation(
             @PathParam("pushAppID") String id,
             @PathParam("simplePushID") String simplePushID,
             SimplePushVariant updatedSimplePushApplication) {
 
-        SimplePushVariant spVariant = (SimplePushVariant) variantService.findByVariantIDForDeveloper(simplePushID, loginName.get());
+        SimplePushVariant spVariant = (SimplePushVariant) variantService.findByVariantIDForDeveloper(simplePushID, sec.getUserPrincipal().getName());
         if (spVariant != null) {
 
             // some validation

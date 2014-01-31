@@ -18,16 +18,11 @@ For iOS there is a little [helper library](https://github.com/aerogear/aerogear-
 
 #### JavaScript
 
-The [AeroGear.js](https://github.com/aerogear/aerogear-js) library has support for device registration with the UnifiedPush Server. This can be used from Apache Cordova applications as well. Besides that, AeroGear.js comes with a polyfill implementation of Mozilla's SimplePush API, which makes it easy to run SimplePush in any browser, there is **_no_** limitation to Firefox OS or the Firefox browsers.
+The [AeroGear.js](https://github.com/aerogear/aerogear-js) library has support for device registration with the UnifiedPush Server. This can be used from Apache Cordova applications or Chrome Packaged Apps as well. Besides that, AeroGear.js comes with a polyfill implementation of Mozilla's SimplePush API, which makes it easy to run SimplePush in any browser, there is **_no_** limitation to Firefox OS or the Firefox browsers.
 
 ### Getting started with the server
 
-Starting the JBoss Application Server:
-
-```
-./bin/standalone.sh -b 0.0.0.0
-```
-
+The UnifiedPush Server requires a databases before it is able to run. The following explains how to get going with different databases.
 
 ### Database configuration
 
@@ -36,7 +31,13 @@ The UnifiedPush Server requires a datasource with ```java:jboss/datasources/Push
 
 #### H2 Database configuration
 
-The H2 database is included in the JBoss AS and is pretty easy to install:
+The H2 database is included in the JBoss AS and is pretty easy to install. First start the server:
+
+```
+./standalone.sh
+```
+
+and afterwards issue the following command:
 
 ```
 /Path/to/JBossAS/bin/jboss-cli.sh --file=./h2-database-config.cli
@@ -54,7 +55,7 @@ For using MySQL a few more steps are required.
 
 ```
 $ mysql -u <user-name>
-mysql> create database unifiedpush;
+mysql> create database unifiedpush default character set = "UTF8" default collate = "utf8_general_ci";
 mysql> create user 'unifiedpush'@'localhost' identified by 'unifiedpush';
 mysql> GRANT SELECT,INSERT,UPDATE,ALTER,DELETE,CREATE,DROP ON unifiedpush.* TO 'unifiedpush'@'localhost';
 ```
@@ -92,6 +93,55 @@ If you inspect the server console output you should see the following message:
 14:41:57,790 INFO  [org.jboss.as.connector.subsystems.datasources] (management-handler-thread - 1) JBAS010404: Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
 14:41:57,794 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-5) JBAS010400: Bound data source [java:jboss/datasources/PushEEDS]
 ```
+
+
+#### PostgreSQL Database configuration
+
+For using PostgreSQL a few more steps are required.
+
+##### Create a database and database user
+
+```
+$ psql -U <user-name>
+psql> create database unifiedpush;
+psql> create user unifiedpush with password 'unifiedpush';
+psql> GRANT ALL PRIVILEGES ON DATABASE unifiedpush to unifiedpush;
+```
+
+##### Add a datasource for the UnifiedPush database
+
+The module for PostgreSQL can be found in ```src/main/resources/modules/org/postgresql```. Copy this module to JBoss AS modules directory:
+
+```
+cp -r src/main/resources/modules/org /Path/to/JBossAS/modules/
+```
+
+We also need the PostgreSQL driver copied to this module:
+
+```
+mvn dependency:copy -Dartifact=org.postgresql:postgresql:9.2-1004-jdbc41 -DoutputDirectory=/Path/to/JBossAS/modules/org/postgresql/main/
+```
+
+Next, start your server:
+
+```
+./standalone.sh
+```
+Finally, run the follwing command line interface script:
+
+```
+/Path/to/JBossAS/bin/jboss-cli.sh --file=./postgresql-database-config.cli
+```
+    
+The above script will add the postgresql driver and a datasource.
+ 
+If you inspect the server console output you should see the following message:
+
+```
+14:41:57,790 INFO  [org.jboss.as.connector.subsystems.datasources] (management-handler-thread - 1) JBAS010404: Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 9.2)
+14:41:57,794 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-5) JBAS010400: Bound data source [java:jboss/datasources/PushEEDS]
+```
+
 
 #### Deploy the UnifiedPush Server
 
@@ -215,6 +265,24 @@ curl -3 -v -b cookies.txt -c cookies.txt
 
 _The response returns a **variantID** and a **secret**, that will be both used later on when registering your installation through the UnifiedPush JS SDK._
 
+##### Chrome Packaged App Variant
+
+Add a ```chromepackagedapp``` variant ( e.g. _HR for a Chrome Packaged App )
+```
+curl -3 -v -b cookies.txt -c cookies.txt
+  -v -H "Accept: application/json" -H "Content-type: application/json"
+  -X POST
+  -d '{
+        "clientId" : "CLIENT_ID",
+        "clientSecret" : "CLIENT_SECRET",
+        "refreshToken" : "REFRESH_TOKEN"
+      }'
+
+  https://SERVER:PORT/CONTEXT/rest/applications/{pushApplicationID}/chrome
+```
+
+_The response returns a **variantID** and a **secret**, that will be both used later on when registering your installation through the UnifiedPush JS SDK._
+
 #### Registration of an installation, for an iOS device:
 
 iOS example for performing registration of a client:
@@ -299,6 +367,27 @@ var metadata = {
     alias: "some_username",
     category: "email",
     simplePushEndpoint: "https://some.server.com/something"
+};
+
+// perform the registration against the UnifiedPush server:
+client.registerWithPushServer(metadata);
+```
+
+#### Registration of an installation, for a JavaScript/ChromePackagedApp client:
+
+JavaScript example for performing registration of a client:
+
+```javascript
+//Create the UnifiedPush client object:
+var client = AeroGear.UnifiedPushClient(
+    "myVariantID",
+    "myVariantSecret",
+    "http://SERVER:PORT/CONTEXT/rest/registry/device"
+);
+
+// assemble the metadata for the registration:
+var metadata = {
+    deviceToken: "theDeviceToken"
 };
 
 // perform the registration against the UnifiedPush server:
