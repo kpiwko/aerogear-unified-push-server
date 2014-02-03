@@ -1,4 +1,10 @@
 <jboss-web>
+    <!-- redirect http to https -->
+    <!-- https://www.openshift.com/kb/kb-e1044-how-to-redirect-traffic-to-https -->
+    <valve>   
+        <class-name>org.jboss.web.rewrite.RewriteValve</class-name>   
+    </valve>
+    <!-- keycloak -->
     <valve>
         <class-name>org.keycloak.adapters.as7.KeycloakAuthenticatorValve</class-name>
     </valve>
