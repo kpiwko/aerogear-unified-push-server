@@ -31,7 +31,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+
 import java.util.UUID;
 
 @Stateless
@@ -48,6 +50,7 @@ public class ChromePackagedAppEndpoint extends AbstractVariantEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerChromePackagedAppVariant(
+            @Context SecurityContext sec,
             ChromePackagedAppVariant chromePackagedAppVariant,
             @PathParam("pushAppID") String pushApplicationID,
             @Context UriInfo uriInfo) {
@@ -79,7 +82,7 @@ public class ChromePackagedAppEndpoint extends AbstractVariantEndpoint {
     // READ
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAllChromePackagedAppVariationsForPushApp(@PathParam("pushAppID") String pushApplicationID) {
+    public Response listAllChromePackagedAppVariationsForPushApp(@Context SecurityContext sec,@PathParam("pushAppID") String pushApplicationID) {
         return Response.ok(pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName()).getChromePackagedAppVariants()).build();
     }
 
@@ -88,6 +91,7 @@ public class ChromePackagedAppEndpoint extends AbstractVariantEndpoint {
     @Path("/{chromeAppID}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateChromePackagedAppVariation(
+            @Context SecurityContext sec,
             @PathParam("pushAppID") String id,
             @PathParam("chromeAppID") String chromeAppID,
             ChromePackagedAppVariant updatedChromePackagedApplication) {

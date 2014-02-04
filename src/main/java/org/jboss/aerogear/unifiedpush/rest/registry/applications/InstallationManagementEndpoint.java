@@ -47,12 +47,9 @@ public class InstallationManagementEndpoint {
     @Inject
     private ClientInstallationService clientInstallationService;
 
-    @Context
-    protected SecurityContext sec;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findInstallations(@PathParam("variantID") String variantId) {
+    public Response findInstallations(@Context SecurityContext sec, @PathParam("variantID") String variantId) {
 
         //Find the variant using the variantID
         Variant variant = genericVariantService.findByVariantIDForDeveloper(variantId, sec.getUserPrincipal().getName());

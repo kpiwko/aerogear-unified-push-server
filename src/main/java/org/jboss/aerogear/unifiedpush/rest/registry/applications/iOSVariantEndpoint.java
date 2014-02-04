@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -48,7 +49,7 @@ public class iOSVariantEndpoint extends AbstractVariantEndpoint {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registeriOSVariant(
+    public Response registeriOSVariant(@Context SecurityContext sec,
             @MultipartForm iOSApplicationUploadForm form,
             @PathParam("pushAppID") String pushApplicationID,
             @Context UriInfo uriInfo) {
@@ -99,7 +100,7 @@ public class iOSVariantEndpoint extends AbstractVariantEndpoint {
     // READ
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAlliOSVariantsForPushApp(@PathParam("pushAppID") String pushApplicationID) {
+    public Response listAlliOSVariantsForPushApp(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID) {
 
         return Response.ok(pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName()).getIOSVariants()).build();
     }
@@ -109,6 +110,7 @@ public class iOSVariantEndpoint extends AbstractVariantEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateiOSVariant(
+            @Context SecurityContext sec,
             @PathParam("pushAppID") String pushApplicationId,
             @PathParam("iOSID") String iOSID,
             iOSVariant updatediOSVariant) {
@@ -133,6 +135,7 @@ public class iOSVariantEndpoint extends AbstractVariantEndpoint {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateiOSVariant(
+            @Context SecurityContext sec,
             @MultipartForm iOSApplicationUploadForm updatedForm,
             @PathParam("pushAppID") String pushApplicationId,
             @PathParam("iOSID") String iOSID) {

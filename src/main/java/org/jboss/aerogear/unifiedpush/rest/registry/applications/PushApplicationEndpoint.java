@@ -50,16 +50,13 @@ public class PushApplicationEndpoint extends AbstractBaseEndpoint {
     @Inject
     private PushApplicationService pushAppService;
 
-    @Context
-    private SecurityContext sec;
-
     private static final Logger LOGGER = Logger.getLogger(PushApplicationEndpoint.class.getSimpleName());
 
     // CREATE
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerPushApplication(PushApplication pushApp) {
+    public Response registerPushApplication(@Context SecurityContext sec, PushApplication pushApp) {
 
         // some validation
         try {
@@ -83,7 +80,7 @@ public class PushApplicationEndpoint extends AbstractBaseEndpoint {
     // READ
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAllPushApplications() {
+    public Response listAllPushApplications(@Context SecurityContext sec) {
         LOGGER.info("===================================================");
         LOGGER.info(sec.getUserPrincipal().getName());
         LOGGER.info("===================================================");
@@ -93,7 +90,7 @@ public class PushApplicationEndpoint extends AbstractBaseEndpoint {
     @GET
     @Path("/{pushAppID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("pushAppID") String pushApplicationID) {
+    public Response findById(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID) {
 
         PushApplication pushApp = pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName());
 
@@ -109,7 +106,7 @@ public class PushApplicationEndpoint extends AbstractBaseEndpoint {
     @Path("/{pushAppID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePushApplication(@PathParam("pushAppID") String pushApplicationID, PushApplication updatedPushApp) {
+    public Response updatePushApplication(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID, PushApplication updatedPushApp) {
 
         PushApplication pushApp = pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName());
 
@@ -142,7 +139,7 @@ public class PushApplicationEndpoint extends AbstractBaseEndpoint {
     @Path("/{pushAppID}/reset")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resetMasterSecret(@PathParam("pushAppID") String pushApplicationID) {
+    public Response resetMasterSecret(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID) {
 
         PushApplication pushApp = pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName());
 
@@ -162,7 +159,7 @@ public class PushApplicationEndpoint extends AbstractBaseEndpoint {
     @DELETE
     @Path("/{pushAppID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deletePushApplication(@PathParam("pushAppID") String pushApplicationID) {
+    public Response deletePushApplication(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID) {
 
         PushApplication pushApp = pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName());
 

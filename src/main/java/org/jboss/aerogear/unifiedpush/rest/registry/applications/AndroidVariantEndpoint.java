@@ -34,6 +34,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
 @Stateless
@@ -45,7 +46,7 @@ public class AndroidVariantEndpoint extends AbstractVariantEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerAndroidVariant(
+    public Response registerAndroidVariant(@Context SecurityContext sec,
             AndroidVariant androidVariant,
             @PathParam("pushAppID") String pushApplicationID,
             @Context UriInfo uriInfo) {
@@ -82,7 +83,7 @@ public class AndroidVariantEndpoint extends AbstractVariantEndpoint {
     // READ
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAllAndroidVariationsForPushApp(@PathParam("pushAppID") String pushApplicationID) {
+    public Response listAllAndroidVariationsForPushApp(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID) {
         return Response.ok(pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName()).getAndroidVariants()).build();
     }
 
@@ -91,7 +92,7 @@ public class AndroidVariantEndpoint extends AbstractVariantEndpoint {
     @Path("/{androidID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateAndroidVariation(
+    public Response updateAndroidVariation(@Context SecurityContext sec,
             @PathParam("pushAppID") String id,
             @PathParam("androidID") String androidID,
             AndroidVariant updatedAndroidApplication) {

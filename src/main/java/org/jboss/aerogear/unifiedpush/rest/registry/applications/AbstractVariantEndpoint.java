@@ -51,14 +51,11 @@ public abstract class AbstractVariantEndpoint extends AbstractBaseEndpoint {
     @Inject
     protected Logger logger;
 
-    @Context
-    protected SecurityContext sec;
-
     // Secret Reset
     @PUT
     @Path("/{variantId}/reset")
     @Consumes(MediaType.APPLICATION_JSON)
-    public javax.ws.rs.core.Response resetSecret(@PathParam("variantId") String variantId) {
+    public javax.ws.rs.core.Response resetSecret(@Context SecurityContext sec, @PathParam("variantId") String variantId) {
 
         Variant variant = variantService.findByVariantIDForDeveloper(variantId, sec.getUserPrincipal().getName());
 
@@ -79,7 +76,7 @@ public abstract class AbstractVariantEndpoint extends AbstractBaseEndpoint {
     @GET
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findVariantById(@PathParam("variantId") String variantId) {
+    public Response findVariantById(@Context SecurityContext sec, @PathParam("variantId") String variantId) {
 
         Variant variant = variantService.findByVariantIDForDeveloper(variantId, sec.getUserPrincipal().getName());
 
@@ -95,7 +92,7 @@ public abstract class AbstractVariantEndpoint extends AbstractBaseEndpoint {
     // DELETE
     @DELETE
     @Path("/{variantId}")
-    public Response deleteVariant(@PathParam("variantId") String variantId) {
+    public Response deleteVariant(@Context SecurityContext sec, @PathParam("variantId") String variantId) {
 
         Variant variant = variantService.findByVariantIDForDeveloper(variantId, sec.getUserPrincipal().getName());
 

@@ -32,6 +32,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
@@ -46,6 +47,7 @@ public class SimplePushVariantEndpoint extends AbstractVariantEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerSimplePushVariant(
+            @Context SecurityContext sec,
             SimplePushVariant simplePushVariant,
             @PathParam("pushAppID") String pushApplicationID,
             @Context UriInfo uriInfo) {
@@ -82,7 +84,7 @@ public class SimplePushVariantEndpoint extends AbstractVariantEndpoint {
     // READ
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response listAllSimplePushVariationsForPushApp(@PathParam("pushAppID") String pushApplicationID) {
+    public Response listAllSimplePushVariationsForPushApp(@Context SecurityContext sec, @PathParam("pushAppID") String pushApplicationID) {
 
         return Response.ok(pushAppService.findByPushApplicationIDForDeveloper(pushApplicationID, sec.getUserPrincipal().getName()).getSimplePushVariants()).build();
     }
@@ -93,6 +95,7 @@ public class SimplePushVariantEndpoint extends AbstractVariantEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateSimplePushVariation(
+            @Context SecurityContext sec,
             @PathParam("pushAppID") String id,
             @PathParam("simplePushID") String simplePushID,
             SimplePushVariant updatedSimplePushApplication) {
