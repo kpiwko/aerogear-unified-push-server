@@ -49,6 +49,19 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        
+        <!-- Add DeltaSpike here - FIXME move do dependency management and not into WF -->
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-servlet-module-api</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.modules</groupId>
+            <artifactId>deltaspike-servlet-module-impl</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        
 
     </dependencies>
 

@@ -1,25 +1,24 @@
 package org.jboss.aerogear.unifiedpush.service.impl;
 
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.New;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.deltaspike.core.api.common.DeltaSpike;
 import org.jboss.aerogear.unifiedpush.service.PushSearchService;
 import org.jboss.aerogear.unifiedpush.service.annotations.LoggedIn;
 import org.jboss.aerogear.unifiedpush.service.annotations.SearchService;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 
-import javax.enterprise.inject.New;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
-
+@RequestScoped
 public class SearchManager {
 
-    private final HttpServletRequest httpServletRequest;
-
-    @Inject
-    public SearchManager(HttpServletRequest httpServletRequest) {
-        this.httpServletRequest = httpServletRequest;
-    }
+    @Inject @DeltaSpike
+    private HttpServletRequest httpServletRequest;
 
     @Produces
     @SearchService
